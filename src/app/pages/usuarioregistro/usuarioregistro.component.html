@@ -1,0 +1,30 @@
+<form class="example-container" [formGroup]="form" #frmProducto="ngForm" >
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                <h4>Registrar Usuario</h4>
+            </mat-card-title>
+        </mat-card-header>
+    </mat-card>
+    <br/>
+    <mat-form-field>
+        <input matInput placeholder="Usuario" required formControlName="username">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Nombres Completo" required formControlName="nombres">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Ingrese Contraseña" required formControlName="password">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Repetir Contraseña" formControlName="password2">
+    </mat-form-field>
+    <mat-grid-list cols = "4" rowHeight = "100px">
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <button mat-raised-button color="primary" (click)="registrar()">Registrar</button>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <button mat-raised-button color="primary" (click)="limpiar()">Limpiar</button>
+        </mat-grid-tile>
+    </mat-grid-list>
+</form>

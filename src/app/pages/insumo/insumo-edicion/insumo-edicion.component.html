@@ -1,0 +1,49 @@
+
+<mat-card>Registrar Insumos</mat-card>
+
+<form class="example-container" [formGroup]="form" #frmInsumo="ngForm" (ngSubmit)="operar()">
+<br>
+<div [hidden]="true">
+  <mat-form-field class="example-full-width">
+    <input matInput placeholder="ID" required formControlName="id">
+  </mat-form-field>
+</div>
+
+  <mat-form-field >
+    <input  matInput placeholder="Nombre" required formControlName="nombre">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-select required placeholder="Marca" [(value)]="idMarcaSeleccionada" formControlName="marca">
+      <mat-option *ngFor="let m of marcas" [value]="m.idMarca">
+        {{ m.nombre }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-select  required placeholder="Nombre Proveedor" [(value)]="idProveedorInsumoSeleccionada" formControlName="proveedorInsumo">
+      <mat-option *ngFor="let n of proveedorinsumos" [value]="n.idProveedorInsumo">
+        {{ n.nombreProveedor }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+
+  <mat-form-field >
+      <input  matInput placeholder="Descripcion" required formControlName="descripcion">
+    </mat-form-field>
+
+
+
+
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="frmInsumo.invalid">
+      <mat-icon>done</mat-icon>
+      <span>Aceptar</span>
+    </button>
+    <button mat-raised-button color="accent" routerLink='/insumo' type="button">
+      <mat-icon>close</mat-icon>
+      <span>Cancelar</span>
+    </button>
+  </form>

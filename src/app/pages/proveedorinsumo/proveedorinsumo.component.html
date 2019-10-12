@@ -1,0 +1,59 @@
+<mat-toolbar>Proveedor Insumo</mat-toolbar>
+
+<div class="example-container mat-elevation-z8">
+
+
+  <div class="example-header">
+    <mat-form-field>
+       <input matInput (keyup)="filter($event.target.value)" placeholder="Buscar Proveedor Insumo">
+     </mat-form-field>
+   </div>  
+
+  <mat-table [dataSource]="dataSource" matSort>
+
+    <ng-container matColumnDef="idProveedorInsumo">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> IDProveedorInsumo </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.idProveedorInsumo}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="nombreProveedor">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.nombreProveedor}} </mat-cell>
+    </ng-container> 
+
+    <ng-container matColumnDef="numeroContacto">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Numero Contacto </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.numeroContacto}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="correo">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Correo </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.correo}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="direccion">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Direccion </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.direccion}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="acciones">
+      <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+      <mat-cell *matCellDef="let row">        
+        <button mat-button color="primary" (click)="openDialog(row)" >Actualizar</button>
+        <button mat-button color="accent" (click)="eliminar(row)">Eliminar</button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;">
+    </mat-row>
+  </mat-table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+</div>
+
+<br>
+
+<button mat-fab color="accent" (click)="openDialog()" style="float: right; margin-right: 20px">
+  <mat-icon>create</mat-icon>
+</button>

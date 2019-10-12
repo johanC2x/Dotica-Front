@@ -1,0 +1,57 @@
+<mat-toolbar>Registro de Producto</mat-toolbar>
+
+<div class="example-container">
+  <form class="example-container" [formGroup]="form" #frmProducto="ngForm" >
+  <mat-form-field>
+    <mat-select placeholder="Tipoproducto" [(value)]="idTipoProductoSeleccionado">
+      <mat-option *ngFor="let t of tipoproductos" [value]="t.idTipoProducto">
+        {{t.nombre}} 
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-select placeholder="Proveedorproducto" [(value)]="idProveedorProductoSeleccionado">
+      <mat-option *ngFor="let p of proveedorproductos" [value]="p.idProveedorProducto">
+        {{p.nombre}} 
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field >
+    <input matInput placeholder="Nombre" required formControlName="nombre">
+  </mat-form-field>
+
+  <mat-form-field >
+    <input matInput placeholder="Descripcion" required formControlName="descripcion">
+  </mat-form-field>
+
+  <mat-form-field >
+    <input type="number" matInput placeholder="Precio" required formControlName="costo">
+  </mat-form-field>
+
+  <mat-form-field >
+    <input type="number" matInput placeholder="Stock" required formControlName="stock">
+  </mat-form-field>
+
+  <!--
+  <mat-form-field>
+    <mat-select placeholder="Insumo" [(value)]="idInsumoSeleccionado">
+      <mat-option *ngFor="let in of insumos" [value]="in.idInsumo">
+        {{ in.nombre }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  -->
+  <!--
+  <button mat-raised-button color="primary" (click)="agregarInsumo()">Agregar Insumo</button>
+  -->
+  <mat-toolbar *ngFor="let d of insumosSeleccionados; let i=index">
+    {{d.nombre}}
+    <span class="example-spacer"></span>
+    <button mat-raised-button color="warn" (click)="removerInsumo(i)">Remover</button>
+  </mat-toolbar>
+  <button mat-raised-button color="primary" (click)="aceptar()" [disabled]="estadoBotonRegistrar()">Registrar</button>
+ </form>
+</div>
+

@@ -1,0 +1,38 @@
+.example-container{
+    display: flex;
+    flex-direction: column;
+}
+
+.example-container>*{
+    margin: auto;
+    width: 50%;
+}
+
+.example-spacer {
+    flex: 1 1 auto;
+}
+
+.radio-space-label {
+    padding-right: 20px;
+}
+
+.sin-padding {
+    margin:0;
+    padding:0;
+}
+
+.my-grid-tile {
+    padding-top: 24px !important;
+}
+
+.button-center {
+    margin: 0 auto;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.boder-content {
+    border-style: outset;
+}

@@ -1,0 +1,35 @@
+<mat-toolbar>Lista de solicitudes</mat-toolbar>
+
+<mat-table [dataSource]="dataSource" matSort>
+    <ng-container matColumnDef="descripcion">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Descripcion</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.descripcion}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="tipo">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.tipo}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="estado">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Estado</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.estado}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="area">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Area</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.area}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="fechaCreacion">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.fechaCreacion | date: 'dd/MM/yyyy'}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="acciones">
+        <mat-header-cell *matHeaderCellDef class="text-center">Acciones</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <a type="button" mat-raised-button color="primary" class="button-center" [routerLink]="['/registrar-cotizacion',element.idCotizacion]">
+                Ver Detalle
+            </a>
+        </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"> 
+    </mat-row>
+</mat-table>

@@ -1,0 +1,110 @@
+<form class="example-container" [formGroup]="form" #frmProducto="ngForm" >
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                <h4>Registro de {{title}} - Nro {{nro_coti}}</h4>
+            </mat-card-title>
+        </mat-card-header>
+    </mat-card>
+    <br/>
+    <mat-form-field>
+        <input type="hidden" id="idUsuario" formControlName="id"/>
+        <input matInput placeholder="Nombre de Solicitud" required formControlName="nombre">
+    </mat-form-field>
+    <!--
+    <mat-grid-list cols = "4" rowHeight = "100px">
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <label id="example-radio-group-label" class="radio-space-label">Tipo: </label>
+            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
+                [(ngModel)]="valueType" formControlName="tipo" required>
+                <mat-radio-button class="example-radio-button" *ngFor="let type of types" [value]="type">
+                    {{type}}
+                </mat-radio-button>
+            </mat-radio-group>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <label id="example-radio-group-label" class="radio-space-label">Estado: </label>
+            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
+                [(ngModel)]="valueState" formControlName="estado" required>
+                <mat-radio-button class="example-radio-button" *ngFor="let state of states" [value]="state">
+                    {{state}}
+                </mat-radio-button>
+            </mat-radio-group>
+        </mat-grid-tile>
+    </mat-grid-list>
+    --> 
+    <mat-form-field >
+        <input matInput placeholder="Descripcion de Solicitud" required formControlName="descripcion">
+    </mat-form-field>
+    <mat-grid-list cols = "5" rowHeight="100px">
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-select placeholder="Seleccionar Area" [(value)]="idArea">
+                <mat-option [value]="0">Seleccionar Area</mat-option>
+                <mat-option *ngFor="let p of areas" [value]="p.id">
+                    {{p.nombre}} 
+                </mat-option>
+            </mat-select>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-form-field>
+                <input matInput placeholder="Solicitante" value="{{cliente}}" readonly="true"/>
+            </mat-form-field>
+        </mat-grid-tile>
+    </mat-grid-list>
+    <mat-grid-list cols = "5" rowHeight="100px">
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-select placeholder="Seleccionar Producto" [(value)]="idProducto">
+                <mat-option [value]="0">Seleccionar Producto</mat-option>
+                <mat-option *ngFor="let p of productos" [value]="p.idProducto">
+                    {{p.nombre}} 
+                </mat-option>
+            </mat-select>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-form-field>
+                <input matInput type="number" placeholder="Cantidad" required formControlName="cantidad">
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "1" [rowspan] = "1">
+            <a mat-raised-button color="primary" (click)="agregarProducto()">Agregar</a>
+        </mat-grid-tile>
+    </mat-grid-list>
+    <mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="nombre">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre Producto</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.nombre}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="stock">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.stock}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="precio">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Precio</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.precio}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="total">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Total</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.total}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="acciones">
+            <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <a type="button" mat-raised-button color="primary" (click)="removerProducto(element.idProducto)" class="button-center">Remover</a>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"> 
+        </mat-row>
+    </mat-table>
+    <mat-grid-list cols = "4" rowHeight = "100px">
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1" *ngIf="!isUpdate">
+            <button mat-raised-button color="primary" (click)="registrar()">Registrar</button>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1" *ngIf="isUpdate">
+            <button mat-raised-button color="primary" (click)="registrar()" [disabled]="disabledUpdate">Actualizar</button>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <button mat-raised-button color="primary" (click)="limpiar()">Limpiar</button>
+        </mat-grid-tile>
+    </mat-grid-list>
+</form>

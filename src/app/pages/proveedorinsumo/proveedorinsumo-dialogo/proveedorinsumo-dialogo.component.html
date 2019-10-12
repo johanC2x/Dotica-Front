@@ -1,0 +1,16 @@
+<div >
+  <mat-form-field>
+    <input matInput placeholder="nombreProveedor" [(ngModel)]="proveedorinsumo.nombreProveedor">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="numeroContacto" [(ngModel)]="proveedorinsumo.numeroContacto">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="correo" [(ngModel)]="proveedorinsumo.correo">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="direccion" [(ngModel)]="proveedorinsumo.direccion">
+  </mat-form-field>
+</div>
+<button mat-raised-button color="primary" (click)="operar()">Aceptar</button>
+<button mat-raised-button color="accent" (click)="cancelar()">Cancelar</button>
