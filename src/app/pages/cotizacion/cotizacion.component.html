@@ -37,6 +37,7 @@
         <input matInput placeholder="Descripcion de Solicitud" required formControlName="descripcion">
     </mat-form-field>
     <mat-grid-list cols = "5" rowHeight="100px">
+    <!--
         <mat-grid-tile [colspan] = "2" [rowspan] = "1">
             <mat-select placeholder="Seleccionar Area" [(value)]="idArea">
                 <mat-option [value]="0">Seleccionar Area</mat-option>
@@ -45,6 +46,7 @@
                 </mat-option>
             </mat-select>
         </mat-grid-tile>
+    -->
         <mat-grid-tile [colspan] = "2" [rowspan] = "1">
             <mat-form-field>
                 <input matInput placeholder="Solicitante" value="{{cliente}}" readonly="true"/>
