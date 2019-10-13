@@ -121,6 +121,7 @@ export class CotizacionComponent implements OnInit {
       this.nro_coti = this.route.firstChild.snapshot.params['id'];
     }else{
       this.obtenerMax();
+      this.isEditAdmin = false;
       this.usuarioService.obtenerPorNick(decodedToken.user_name).subscribe( data => {
         this.cliente = data.nombres;
         let position_rol = data.roles.findIndex(v => v.nombre === 'ADMIN');
