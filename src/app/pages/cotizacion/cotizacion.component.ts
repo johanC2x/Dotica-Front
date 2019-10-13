@@ -6,7 +6,7 @@ import { MatTableDataSource } from '@angular/material';
 import { CotizacionService } from '../../_service/cotizacion.service';
 import { MatSnackBar} from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
-import { TOKEN_NAME } from '../../_shared/var.constants';
+import { TOKEN_NAME,ESTADO_R, ESTADO_C, ESTADO_A, ESTADO_A1, ESTADO_A2, ESTADO_A3, ESTADO_F } from '../../_shared/var.constants';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { UsuarioService } from '../../_service/usuario.service';
 import { Cotizacion } from '../../_model/cotizacion';
@@ -47,9 +47,9 @@ export class CotizacionComponent implements OnInit {
   };
   cantidad:0;
 
-  tipoCotizacion = "R";
-  estadoCotizacion = "Pendiente";
-  title = "Reuerimiento";
+  tipoCotizacion = "Requerimiento";
+  estadoCotizacion = "Requerido";
+  title = "Requerimiento";
   nro_coti = 0;
   cliente = "";
   idArea = "";
@@ -62,9 +62,14 @@ export class CotizacionComponent implements OnInit {
   ];
 
   isUpdate = false;
+  isCancel = false;
+  isAdmin = false;
+  disabledAdd = false;
+  nombre_boton = "Requerimiento";
 
   idCotizacion: any;
   paramsSub: any;
+  idCliente: any;
 
   disabledUpdate = false;
   cotizacionObj : Cotizacion;
@@ -93,18 +98,13 @@ export class CotizacionComponent implements OnInit {
     let tk = JSON.parse(sessionStorage.getItem(TOKEN_NAME));
     const decodedToken = helper.decodeToken(tk.access_token);
 
-    this.usuarioService.obtenerPorNick(decodedToken.user_name).subscribe( data => {
-      this.cliente = data.nombres;
-      let position_rol = data.roles.findIndex(v => v.nombre === 'ADMIN');
-      if(position_rol !== -1){
-        this.states = ['Aprobado','Anulado','Pendiente'];
-      }
-      sessionStorage.setItem("usuario", JSON.stringify(data));
-    });
-    
     this.valueType = 'Con Aprobacion';
     this.valueState = 'Pendiente';
     this.obtenerProductos();
+
+    this.usuarioService.obtenerPorNick(decodedToken.user_name).subscribe( data => {
+      sessionStorage.setItem("usuario", JSON.stringify(data));
+    });
 
     if(this.route.firstChild !== null && this.route.firstChild !== undefined && this.route.firstChild.snapshot.params['id'] !== undefined){
       this.isUpdate = true;
@@ -113,6 +113,22 @@ export class CotizacionComponent implements OnInit {
       this.nro_coti = this.route.firstChild.snapshot.params['id'];
     }else{
       this.obtenerMax();
+      this.usuarioService.obtenerPorNick(decodedToken.user_name).subscribe( data => {
+        console.log(data);
+        this.cliente = data.nombres;
+        let position_rol = data.roles.findIndex(v => v.nombre === 'ADMIN');
+        let position_rol_a1 = data.roles.findIndex(v => v.nombre === 'ADMA1');
+        let position_rol_a2 = data.roles.findIndex(v => v.nombre === 'ADMA2');
+        let position_rol_a3 = data.roles.findIndex(v => v.nombre === 'ADMA3');
+        if(position_rol !== -1){
+          this.states = ['Aprobado','Anulado','Pendiente'];
+          this.isAdmin = true;
+        }
+        if(position_rol_a1 !== -1 || position_rol_a2 !== -1 || position_rol_a3 !== -1){
+          this.isAdmin = true;
+        }
+        sessionStorage.setItem("usuario", JSON.stringify(data));
+      });
     }
   }
 
@@ -125,7 +141,9 @@ export class CotizacionComponent implements OnInit {
   obtenerMax(){
     this.cotizacionService.obtenerMax().subscribe(data =>{
       this.cotizacionObj = data;
-      this.nro_coti = data.idCotizacion;
+      this.nro_coti = data.idCotizacion + 1;
+    },error => {
+      this.nro_coti = 1;
     });
   }
 
@@ -140,8 +158,81 @@ export class CotizacionComponent implements OnInit {
         'cantidad': new FormControl(0),
         'nombre': new FormControl(data.motivo)
       });
-
+      this.cliente = data.usuario.nombres;
+      this.idCliente = data.usuario.idUsuario;
       this.idArea = data.area;
+      if(data.estado === ESTADO_R && user.roles[0].nombre !== 'USER') {
+        this.isAdmin = true;
+        this.disabledUpdate = false;
+        this.disabledAdd = true;
+        this.tipoCotizacion = 'Cotizacion';
+        this.estadoCotizacion = 'Cotizado';
+        this.nombre_boton = 'Cotizar';
+      } else if(data.estado === ESTADO_C && user.roles[0].nombre === 'USER') {
+        this.isAdmin = true;
+        this.disabledAdd = true;
+        this.tipoCotizacion = 'Cotizacion';
+        this.estadoCotizacion = 'Aprobado';
+        this.nombre_boton = 'Aprobar';
+        this.isCancel = true;
+      } else if(data.estado === ESTADO_A && user.roles[0].nombre !== 'USER') {
+        this.isAdmin = true;
+        this.disabledAdd = true;
+        this.tipoCotizacion = 'Orden de Servicio';
+        this.estadoCotizacion = 'AprobadoA1';
+        this.nombre_boton = 'Autorizar';
+      } else if(data.estado === ESTADO_A1 && user.roles[0].nombre !== 'USER') {
+        this.isAdmin = true;
+        this.disabledAdd = true;
+        this.tipoCotizacion = 'Orden de Servicio';
+        this.estadoCotizacion = 'AprobadoA2';
+        this.nombre_boton = 'Autorizar';
+      } else if(data.estado === ESTADO_A2 && user.roles[0].nombre !== 'USER') {
+        this.isAdmin = true;
+        this.disabledAdd = true;
+        this.tipoCotizacion = 'Orden de Servicio';
+        this.estadoCotizacion = 'AprobadoA3';
+        this.nombre_boton = 'Autorizar';
+      } else if(data.estado === ESTADO_A3 && user.roles[0].nombre !== 'USER') {
+        this.isAdmin = true;
+        this.disabledAdd = true;
+        this.tipoCotizacion = 'Orden Autorizada';
+        this.estadoCotizacion = 'Finalizado';
+        this.nombre_boton = 'Autorizar';
+      } else if(data.estado === ESTADO_F && user.roles[0].nombre !== 'USER') {
+        this.isAdmin = true;
+        this.disabledUpdate = true;
+        this.disabledAdd = true;
+        this.tipoCotizacion = 'Finalizado';
+        this.estadoCotizacion = 'Finalizado';
+        this.nombre_boton = 'Autorizada';
+      }
+
+      if(user.roles[0].nombre === 'ADMIN' && (
+        data.estado === ESTADO_A1 || data.estado === ESTADO_A2 || data.estado === ESTADO_A3 || data.estado === ESTADO_F
+      )){
+        this.isAdmin = true;
+        this.disabledUpdate = true;
+        this.disabledAdd = true;
+      }
+
+      if(user.roles[0].nombre === 'USER' && (
+        data.estado === ESTADO_A1 || data.estado === ESTADO_A2 || data.estado === ESTADO_A3 || data.estado === ESTADO_F
+      )){
+        this.isAdmin = true;
+        this.disabledUpdate = true;
+        this.disabledAdd = true;
+      }
+
+      if(data.estado === ESTADO_R && data.usuario.roles[0].nombre === 'ADMA1') {
+          this.isAdmin = true;
+          this.disabledAdd = true;
+          this.tipoCotizacion = 'Finalizado';
+          this.estadoCotizacion = 'Finalizado';
+          this.nombre_boton = 'Aprobar';
+      }
+
+      /*
       if(data.estado === 'Aprobado'){
         this.disabledUpdate = true;
         this.title = "Cotización";
@@ -162,6 +253,7 @@ export class CotizacionComponent implements OnInit {
           this.disabledUpdate = true;
         }
       }
+      */
 
       let array_productos = JSON.parse(data.data);
       if(array_productos.length > 0){
@@ -200,6 +292,10 @@ export class CotizacionComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.productosStock);
   }
 
+  cancelar(){
+    console.log("==================== CANCELAR ========================");
+  }
+
   registrar(){
     let user = JSON.parse(sessionStorage.getItem("usuario"));
     const obj = {
@@ -210,9 +306,7 @@ export class CotizacionComponent implements OnInit {
       tipo: this.valueType,
       estado: this.valueState,
       area: this.idArea,
-      usuario: {
-        idUsuario: user.idUsuario
-      },
+      usuario: {},
       productos: JSON.parse(JSON.stringify(this.productosStock)),
       data: JSON.stringify(this.productosStock)
     };
@@ -220,11 +314,17 @@ export class CotizacionComponent implements OnInit {
       obj.idCotizacion = this.idCotizacion;
       obj.tipo = this.tipoCotizacion;
       obj.estado = this.estadoCotizacion;
+      obj.usuario = {
+        idUsuario: this.idCliente
+      };
       this.actualizar(obj);
     }else{
       delete obj.idCotizacion;
       obj.tipo = this.tipoCotizacion;
       obj.estado = this.estadoCotizacion;
+      obj.usuario = {
+        idUsuario: user.idUsuario
+      };
       this.insertar(obj);
     }
   }

@@ -37,6 +37,26 @@ export class SolicitudComponent implements OnInit {
           this.cotizaciones = data;
           this.dataSource = new MatTableDataSource(this.cotizaciones);
         });
+      } else if(data.roles[0].nombre === 'USER'){
+        this.cotizacionService.listar().subscribe(lista => {
+          this.cotizaciones = lista.filter(coti => coti.usuario.username === data.username);
+          this.dataSource = new MatTableDataSource(this.cotizaciones);
+        });
+      } else if(data.roles[0].nombre === 'ADMA1'){
+        this.cotizacionService.listar().subscribe(lista => {
+          this.cotizaciones = lista.filter(coti => coti.estado === "AprobadoA1");
+          this.dataSource = new MatTableDataSource(this.cotizaciones);
+        });
+      } else if(data.roles[0].nombre === 'ADMA2'){
+        this.cotizacionService.listar().subscribe(lista => {
+          this.cotizaciones = lista.filter(coti => coti.estado === "AprobadoA2");
+          this.dataSource = new MatTableDataSource(this.cotizaciones);
+        });
+      } else if(data.roles[0].nombre === 'ADMA3'){
+        this.cotizacionService.listar().subscribe(lista => {
+          this.cotizaciones = lista.filter(coti => coti.estado === "AprobadoA3");
+          this.dataSource = new MatTableDataSource(this.cotizaciones);
+        });
       } else {
         this.cotizacionService.listarPorEstado().subscribe(data => {
           this.cotizaciones = data;

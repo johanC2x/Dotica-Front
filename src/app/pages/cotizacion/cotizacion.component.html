@@ -53,60 +53,65 @@
         </mat-grid-tile>
     </mat-grid-list>
     -->
-    <mat-grid-list cols = "5" rowHeight="100px">
-        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
-            <mat-select placeholder="Seleccionar Producto" [(value)]="idProducto">
-                <mat-option [value]="0">Seleccionar Producto</mat-option>
-                <mat-option *ngFor="let p of productos" [value]="p.idProducto">
-                    {{p.nombre}} 
-                </mat-option>
-            </mat-select>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
-            <mat-form-field>
-                <input matInput type="number" placeholder="Cantidad" required formControlName="cantidad">
-            </mat-form-field>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan] = "1" [rowspan] = "1">
-            <a mat-raised-button color="primary" (click)="agregarProducto()">Agregar</a>
-        </mat-grid-tile>
-    </mat-grid-list>
-    <mat-table [dataSource]="dataSource" matSort>
-        <ng-container matColumnDef="nombre">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre Producto</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{row.nombre}}</mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="stock">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{row.stock}}</mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="precio">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Precio</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{row.precio}}</mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="total">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Total</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{row.total}}</mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="acciones">
-            <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <a type="button" mat-raised-button color="primary" (click)="removerProducto(element.idProducto)" class="button-center">Remover</a>
-            </mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"> 
-        </mat-row>
-    </mat-table>
+    <div *ngIf="isAdmin" >
+        <mat-grid-list cols = "5" rowHeight="100px">
+            <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+                <mat-select placeholder="Seleccionar Producto" [(value)]="idProducto">
+                    <mat-option [value]="0">Seleccionar Producto</mat-option>
+                    <mat-option *ngFor="let p of productos" [value]="p.idProducto">
+                        {{p.nombre}} 
+                    </mat-option>
+                </mat-select>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+                <mat-form-field>
+                    <input matInput type="number" placeholder="Cantidad" required formControlName="cantidad">
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan] = "1" [rowspan] = "1">
+                <a mat-raised-button color="primary" (click)="agregarProducto()" [disabled]="disabledAdd">Agregar</a>
+            </mat-grid-tile>
+        </mat-grid-list>
+        <mat-table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="nombre">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre Producto</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.nombre}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="stock">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.stock}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="precio">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Precio</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.precio}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="total">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Total</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.total}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="acciones">
+                <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <a type="button" mat-raised-button color="primary" (click)="removerProducto(element.idProducto)" class="button-center" [disabled]="disabledAdd">Remover</a>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"> 
+            </mat-row>
+        </mat-table>
+    </div>
     <mat-grid-list cols = "4" rowHeight = "100px">
         <mat-grid-tile [colspan] = "2" [rowspan] = "1" *ngIf="!isUpdate">
             <button mat-raised-button color="primary" (click)="registrar()">Registrar</button>
         </mat-grid-tile>
         <mat-grid-tile [colspan] = "2" [rowspan] = "1" *ngIf="isUpdate">
-            <button mat-raised-button color="primary" (click)="registrar()" [disabled]="disabledUpdate">Actualizar</button>
+            <button mat-raised-button color="primary" (click)="registrar()" [disabled]="disabledUpdate">{{nombre_boton}}</button>
         </mat-grid-tile>
-        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1" *ngIf="!isCancel">
             <button mat-raised-button color="primary" (click)="limpiar()">Limpiar</button>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1" *ngIf="isCancel">
+            <button mat-raised-button color="primary" (click)="cancelar()">Cancelar</button>
         </mat-grid-tile>
     </mat-grid-list>
 </form>
