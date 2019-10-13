@@ -64,6 +64,7 @@ export class CotizacionComponent implements OnInit {
     {id:"A5",nombre:"Area5"},
   ];
 
+  isEditAdmin = false;
   isUpdate = false;
   isCancel = false;
   isAdmin = false;
@@ -220,24 +221,28 @@ export class CotizacionComponent implements OnInit {
         this.estadoCotizacion = 'AprobadoA1';
         this.nombre_boton = 'Autorizar';
       } else if(data.estado === ESTADO_A1 && user.roles[0].nombre !== 'USER') {
+        this.isEditAdmin = true;
         this.isAdmin = true;
         this.disabledAdd = true;
         this.tipoCotizacion = 'Orden de Servicio';
         this.estadoCotizacion = 'AprobadoA2';
         this.nombre_boton = 'Autorizar';
       } else if(data.estado === ESTADO_A2 && user.roles[0].nombre !== 'USER') {
+        this.isEditAdmin = true;
         this.isAdmin = true;
         this.disabledAdd = true;
         this.tipoCotizacion = 'Orden de Servicio';
         this.estadoCotizacion = 'AprobadoA3';
         this.nombre_boton = 'Autorizar';
       } else if(data.estado === ESTADO_A3 && user.roles[0].nombre !== 'USER') {
+        this.isEditAdmin = true;
         this.isAdmin = true;
         this.disabledAdd = true;
         this.tipoCotizacion = 'Orden Autorizada';
         this.estadoCotizacion = 'Finalizado';
         this.nombre_boton = 'Autorizar';
       } else if(data.estado === ESTADO_F && user.roles[0].nombre !== 'USER') {
+        this.isEditAdmin = true;
         this.isAdmin = true;
         this.disabledUpdate = true;
         this.disabledAdd = true;

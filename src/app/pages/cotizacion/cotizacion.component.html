@@ -9,7 +9,7 @@
     <br/>
     <mat-form-field>
         <input type="hidden" id="idUsuario" formControlName="id"/>
-        <input matInput placeholder="Nombre de Solicitud" required formControlName="nombre">
+        <input matInput placeholder="Nombre de Solicitud" required formControlName="nombre" readonly="isEditAdmin">
     </mat-form-field>
     <!--
     <mat-grid-list cols = "4" rowHeight = "100px">
@@ -34,7 +34,7 @@
     </mat-grid-list>
     --> 
     <mat-form-field >
-        <input matInput placeholder="Descripcion de Solicitud" required formControlName="descripcion">
+        <input matInput placeholder="Descripcion de Solicitud" required formControlName="descripcion" readonly="isEditAdmin">
     </mat-form-field>
     <mat-form-field>
         <input matInput placeholder="Solicitante" value="{{cliente}}" readonly="true"/>
