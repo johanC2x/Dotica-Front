@@ -250,6 +250,8 @@ export class CotizacionComponent implements OnInit {
         this.tipoCotizacion = 'Finalizado';
         this.estadoCotizacion = 'Finalizado';
         this.nombre_boton = 'Autorizada';
+      } else {
+        this.isEditAdmin = false;
       }
 
       if(user.roles[0].nombre === 'ADMIN' && (
