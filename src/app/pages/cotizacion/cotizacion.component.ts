@@ -19,6 +19,7 @@ import { Cotizacion } from '../../_model/cotizacion';
 export class CotizacionComponent implements OnInit {
 
   displayedColumns = ['nombre','stock','precio','total','acciones'];
+  displayedColumnsCoti = ['nro','nombre','acciones'];
 
   mensaje: string;
   form: FormGroup;
@@ -32,8 +33,10 @@ export class CotizacionComponent implements OnInit {
   productos: Producto[] = [];
   producto: Producto;
   productosStock = [];
+  lista_cotizacion = [];
   objProducto = {"idProducto":0,"nombre":"","stock":"0","precio":0,"total" : 0};
   dataSource: MatTableDataSource<Producto>;
+  dataSource_coti: MatTableDataSource<Cotizacion>;
 
   cotizacion: {
     "descripcion": string,
@@ -65,6 +68,9 @@ export class CotizacionComponent implements OnInit {
   isCancel = false;
   isAdmin = false;
   disabledAdd = false;
+  addCoti = false;
+  idAddCoti = 0;
+  cotizaciones_area : Cotizacion[] = [];
   nombre_boton = "Requerimiento";
 
   idCotizacion: any;
@@ -101,6 +107,7 @@ export class CotizacionComponent implements OnInit {
     this.valueType = 'Con Aprobacion';
     this.valueState = 'Pendiente';
     this.obtenerProductos();
+    this.obtenerCotizacionPorArea();
 
     this.usuarioService.obtenerPorNick(decodedToken.user_name).subscribe( data => {
       sessionStorage.setItem("usuario", JSON.stringify(data));
@@ -114,7 +121,6 @@ export class CotizacionComponent implements OnInit {
     }else{
       this.obtenerMax();
       this.usuarioService.obtenerPorNick(decodedToken.user_name).subscribe( data => {
-        console.log(data);
         this.cliente = data.nombres;
         let position_rol = data.roles.findIndex(v => v.nombre === 'ADMIN');
         let position_rol_a1 = data.roles.findIndex(v => v.nombre === 'ADMA1');
@@ -130,6 +136,33 @@ export class CotizacionComponent implements OnInit {
         sessionStorage.setItem("usuario", JSON.stringify(data));
       });
     }
+  }
+
+  obtenerCotizacionPorArea(){
+    this.cotizacionService.listar().subscribe(data => {
+      let user = JSON.parse(sessionStorage.getItem("usuario"));
+      if(user.roles[0].nombre === 'ADMA1'){
+        data = data.filter(coti => coti.usuario.roles[0].nombre === 'ADMA1').sort((a,b) => (a.idCotizacion > b.idCotizacion) ? 1 : ((b.idCotizacion > a.idCotizacion) ? -1 : 0));
+      } else if(user.roles[0].nombre === 'ADMA2'){
+        data = data.filter(coti => coti.usuario.roles[0].nombre === 'ADMA2').sort((a,b) => (a.idCotizacion > b.idCotizacion) ? 1 : ((b.idCotizacion > a.idCotizacion) ? -1 : 0));
+      } else if(user.roles[0].nombre === 'ADMA3'){
+        data = data.filter(coti => coti.usuario.roles[0].nombre === 'ADMA3').sort((a,b) => (a.idCotizacion > b.idCotizacion) ? 1 : ((b.idCotizacion > a.idCotizacion) ? -1 : 0));
+      }
+      this.cotizaciones_area = data;
+    });
+  }
+
+  obtenerCoti(value: number){
+    this.cotizacionService.obtenerPorId(value).subscribe(data => {
+      this.lista_cotizacion.push(data);
+      this.dataSource_coti = new MatTableDataSource(this.lista_cotizacion);
+    });
+    this.idAddCoti = 0;
+  }
+
+  removerCoti(id: number){
+    this.lista_cotizacion.splice(this.lista_cotizacion.findIndex(v => v.idCotizacion === id), 1);
+    this.dataSource_coti = new MatTableDataSource(this.lista_cotizacion);
   }
 
   obtenerProductos(){
@@ -161,6 +194,11 @@ export class CotizacionComponent implements OnInit {
       this.cliente = data.usuario.nombres;
       this.idCliente = data.usuario.idUsuario;
       this.idArea = data.area;
+
+      if(user.roles[0].nombre === 'ADMA1' || user.roles[0].nombre === 'ADMA2' || user.roles[0].nombre === 'ADMA3') {
+        this.addCoti = true;
+      }
+
       if(data.estado === ESTADO_R && user.roles[0].nombre !== 'USER') {
         this.isAdmin = true;
         this.disabledUpdate = false;
@@ -256,6 +294,7 @@ export class CotizacionComponent implements OnInit {
       */
 
       let array_productos = JSON.parse(data.data);
+      let array_coti = JSON.parse(data.data_coti);
       if(array_productos.length > 0){
         array_productos.forEach((element) => {
           this.objProducto = {"idProducto": 0,"nombre":"","stock":"0","precio":0, "total" : 0};
@@ -267,6 +306,11 @@ export class CotizacionComponent implements OnInit {
           this.productosStock.push(this.objProducto);
           this.dataSource = new MatTableDataSource(this.productosStock);
         });
+      }
+      if(array_coti.length > 0){
+        console.log(array_coti);
+        this.lista_cotizacion = array_coti;
+        this.dataSource_coti = new MatTableDataSource(this.lista_cotizacion);
       }
     });
   }
@@ -308,7 +352,8 @@ export class CotizacionComponent implements OnInit {
       area: this.idArea,
       usuario: {},
       productos: JSON.parse(JSON.stringify(this.productosStock)),
-      data: JSON.stringify(this.productosStock)
+      data: JSON.stringify(this.productosStock),
+      data_coti: JSON.stringify(this.lista_cotizacion)
     };
     if(this.route.firstChild !== null && this.route.firstChild !== undefined && this.route.firstChild.snapshot.params['id'] !== undefined){
       obj.idCotizacion = this.idCotizacion;

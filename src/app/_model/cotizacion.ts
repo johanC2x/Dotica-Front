@@ -8,6 +8,7 @@ export class Cotizacion{
     fechaCreacion: Date;
     fechaModificacion: Date;
     data: string;
+    data_coti: string;
     usuario: any;
     productos: any[]
 }

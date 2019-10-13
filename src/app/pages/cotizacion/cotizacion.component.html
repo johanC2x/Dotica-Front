@@ -39,21 +39,44 @@
     <mat-form-field>
         <input matInput placeholder="Solicitante" value="{{cliente}}" readonly="true"/>
     </mat-form-field>
-    <!--
-    <mat-grid-list cols = "5" rowHeight="100px">
+    
+    <mat-grid-list cols = "5" rowHeight="100px" *ngIf="addCoti">
         <mat-grid-tile [colspan] = "2" [rowspan] = "1">
-            <mat-select placeholder="Seleccionar Area" [(value)]="idArea">
-                <mat-option [value]="0">Seleccionar Area</mat-option>
-                <mat-option *ngFor="let p of areas" [value]="p.id">
-                    {{p.nombre}} 
+            <mat-select placeholder="Seleccionar Cotizacion" [(value)]="idAddCoti" (selectionChange)="obtenerCoti($event.value)">
+                <mat-option [value]="0">Seleccionar Requerimiento</mat-option>
+                <mat-option *ngFor="let p of cotizaciones_area" [value]="p.idCotizacion">
+                    {{p.motivo}} 
                 </mat-option>
             </mat-select>
         </mat-grid-tile>
         <mat-grid-tile [colspan] = "2" [rowspan] = "1">
         </mat-grid-tile>
     </mat-grid-list>
-    -->
+    
+    <div *ngIf="addCoti" >
+        <mat-table [dataSource]="dataSource_coti" matSort>
+            <ng-container matColumnDef="nro">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Nro</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.idCotizacion}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="nombre">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Motivo</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.motivo}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="acciones">
+                <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <a type="button" mat-raised-button color="primary" (click)="removerCoti(element.idCotizacion)" class="button-center" [disabled]="disabledAdd">Remover</a>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumnsCoti"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumnsCoti;"> 
+            </mat-row>
+        </mat-table>
+    </div>
+    
     <div *ngIf="isAdmin" >
+        <br/>
         <mat-grid-list cols = "5" rowHeight="100px">
             <mat-grid-tile [colspan] = "2" [rowspan] = "1">
                 <mat-select placeholder="Seleccionar Producto" [(value)]="idProducto">

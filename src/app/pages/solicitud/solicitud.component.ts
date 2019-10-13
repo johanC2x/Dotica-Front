@@ -13,10 +13,13 @@ import { UsuarioService } from '../../_service/usuario.service';
 })
 export class SolicitudComponent implements OnInit {
 
-  displayedColumns = ['descripcion','tipo','estado','area','fechaCreacion','acciones'];
+  displayedColumns_admin = ['nro','descripcion','solicitante','tipo','estado','area','fechaCreacion','acciones'];
+  displayedColumns = ['nro','descripcion','tipo','estado','fechaCreacion','acciones'];
 
   cotizaciones : Cotizacion[] = [];
   dataSource: MatTableDataSource<Cotizacion>;
+  dataSource_adm: MatTableDataSource<Cotizacion>;
+  isAdmin = false;
 
   constructor(
     private cotizacionService:CotizacionService,
@@ -33,28 +36,29 @@ export class SolicitudComponent implements OnInit {
     const decodedToken = helper.decodeToken(tk.access_token);
     this.usuarioService.obtenerPorNick(decodedToken.user_name).subscribe( data => {
       if(data.roles[0].nombre === 'ADMIN'){
+        this.isAdmin = true;
         this.cotizacionService.listar().subscribe(data => {
-          this.cotizaciones = data;
+          this.cotizaciones = data.sort((a,b) => (a.idCotizacion > b.idCotizacion) ? 1 : ((b.idCotizacion > a.idCotizacion) ? -1 : 0));
           this.dataSource = new MatTableDataSource(this.cotizaciones);
         });
       } else if(data.roles[0].nombre === 'USER'){
         this.cotizacionService.listar().subscribe(lista => {
-          this.cotizaciones = lista.filter(coti => coti.usuario.username === data.username);
+          this.cotizaciones = lista.filter(coti => coti.usuario.username === data.username).sort((a,b) => (a.idCotizacion > b.idCotizacion) ? 1 : ((b.idCotizacion > a.idCotizacion) ? -1 : 0));
           this.dataSource = new MatTableDataSource(this.cotizaciones);
         });
       } else if(data.roles[0].nombre === 'ADMA1'){
         this.cotizacionService.listar().subscribe(lista => {
-          this.cotizaciones = lista.filter(coti => coti.estado === "AprobadoA1");
+          this.cotizaciones = lista.filter(coti => coti.estado === "AprobadoA1").sort((a,b) => (a.idCotizacion > b.idCotizacion) ? 1 : ((b.idCotizacion > a.idCotizacion) ? -1 : 0));
           this.dataSource = new MatTableDataSource(this.cotizaciones);
         });
       } else if(data.roles[0].nombre === 'ADMA2'){
         this.cotizacionService.listar().subscribe(lista => {
-          this.cotizaciones = lista.filter(coti => coti.estado === "AprobadoA2");
+          this.cotizaciones = lista.filter(coti => coti.estado === "AprobadoA2").sort((a,b) => (a.idCotizacion > b.idCotizacion) ? 1 : ((b.idCotizacion > a.idCotizacion) ? -1 : 0));
           this.dataSource = new MatTableDataSource(this.cotizaciones);
         });
       } else if(data.roles[0].nombre === 'ADMA3'){
         this.cotizacionService.listar().subscribe(lista => {
-          this.cotizaciones = lista.filter(coti => coti.estado === "AprobadoA3");
+          this.cotizaciones = lista.filter(coti => coti.estado === "AprobadoA3").sort((a,b) => (a.idCotizacion > b.idCotizacion) ? 1 : ((b.idCotizacion > a.idCotizacion) ? -1 : 0));
           this.dataSource = new MatTableDataSource(this.cotizaciones);
         });
       } else {
