@@ -180,10 +180,18 @@ export class CotizacionComponent implements OnInit {
   }
 
   obtenerProductos(){
-    this.productoService.listar().subscribe(data =>{
-      data = data.filter(v => v.tipoProducto.nombre === 'SERVICIO');
-      this.productos = data;
-    });
+    let user = JSON.parse(sessionStorage.getItem("usuario"));
+    if(user.roles[0].nombre === 'ADMA1' || user.roles[0].nombre === 'ADMA2'  || user.roles[0].nombre === 'ADMA3' ){
+      this.productoService.listar().subscribe(data =>{
+        data = data.filter(v => v.tipoProducto.nombre === 'MATERIAL');
+        this.productos = data;
+      });
+    } else {
+      this.productoService.listar().subscribe(data =>{
+        data = data.filter(v => v.tipoProducto.nombre === 'SERVICIO');
+        this.productos = data;
+      });
+    }
   }
 
   obtenerMax(){
