@@ -10,15 +10,47 @@
     <mat-form-field>
         <input matInput placeholder="Usuario" required formControlName="username">
     </mat-form-field>
+    <mat-grid-list cols = "4" rowHeight="100px">
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <input type="password" matInput placeholder="Ingrese Contraseña" required formControlName="password">
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <input type="password" matInput placeholder="Repetir Contraseña" formControlName="password2">
+        </mat-grid-tile>
+    </mat-grid-list>
     <mat-form-field>
         <input matInput placeholder="Nombres Completo" required formControlName="nombres">
     </mat-form-field>
-    <mat-form-field>
-        <input matInput placeholder="Ingrese Contraseña" required formControlName="password">
-    </mat-form-field>
-    <mat-form-field>
-        <input matInput placeholder="Repetir Contraseña" formControlName="password2">
-    </mat-form-field>
+    <mat-grid-list cols = "4" rowHeight="100px">
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-form-field>
+                <input matInput placeholder="Ingrese Edad" required formControlName="edad">
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-select placeholder="Tipo de Usuario" [(value)]="idTipoUsuario">
+                <mat-option [value]="0">Seleccionar</mat-option>
+                <mat-option *ngFor="let p of tipo_usuario" [value]="p.idRol">
+                    {{p.nombre}} 
+                </mat-option>
+            </mat-select>
+        </mat-grid-tile>
+    </mat-grid-list>
+    <mat-grid-list cols = "4" rowHeight="100px">
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-select placeholder="Tipo de Documento" [(value)]="idTipoDocumento">
+                <mat-option [value]="0">Seleccionar</mat-option>
+                <mat-option *ngFor="let p of tipo_documento" [value]="p.id">
+                    {{p.nombre}} 
+                </mat-option>
+            </mat-select>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-form-field>
+                <input matInput placeholder="Ingrese Documento" required formControlName="nrodoc">
+            </mat-form-field>
+        </mat-grid-tile>
+    </mat-grid-list>
     <mat-grid-list cols = "4" rowHeight = "100px">
         <mat-grid-tile [colspan] = "2" [rowspan] = "1">
             <button mat-raised-button color="primary" (click)="registrar()">Registrar</button>

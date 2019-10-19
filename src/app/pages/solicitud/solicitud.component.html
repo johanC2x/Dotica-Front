@@ -6,6 +6,10 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>Nro</mat-header-cell>
             <mat-cell *matCellDef="let row">{{row.idCotizacion}}</mat-cell>
         </ng-container>
+        <ng-container matColumnDef="motivo">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Motivo</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.motivo}}</mat-cell>
+        </ng-container>
         <ng-container matColumnDef="descripcion">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Descripcion</mat-header-cell>
             <mat-cell *matCellDef="let row">{{row.descripcion}}</mat-cell>
@@ -41,6 +45,10 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>Nro</mat-header-cell>
             <mat-cell *matCellDef="let row">{{row.idCotizacion}}</mat-cell>
         </ng-container>
+        <ng-container matColumnDef="motivo">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Motivo</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.motivo}}</mat-cell>
+        </ng-container>
         <ng-container matColumnDef="descripcion">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Descripcion</mat-header-cell>
             <mat-cell *matCellDef="let row">{{row.descripcion}}</mat-cell>
@@ -57,10 +65,12 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>Estado</mat-header-cell>
             <mat-cell *matCellDef="let row">{{row.estado}}</mat-cell>
         </ng-container>
+    <!--
         <ng-container matColumnDef="area">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Area</mat-header-cell>
             <mat-cell *matCellDef="let row">{{row.area}}</mat-cell>
         </ng-container>
+    -->
         <ng-container matColumnDef="fechaCreacion">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</mat-header-cell>
             <mat-cell *matCellDef="let row">{{row.fechaCreacion | date: 'dd/MM/yyyy'}}</mat-cell>

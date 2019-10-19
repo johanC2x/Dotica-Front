@@ -34,95 +34,116 @@
     </mat-grid-list>
     -->
     <mat-form-field >
-        <input matInput placeholder="Descripcion de Solicitud" required formControlName="descripcion">
+        <textarea matInput placeholder="Descripcion de Solicitud" required formControlName="descripcion"
+        rows="5">
+        </textarea>
     </mat-form-field>
     <mat-form-field>
         <input matInput placeholder="Solicitante" value="{{cliente}}" readonly="true"/>
     </mat-form-field>
     
-    <mat-grid-list cols = "5" rowHeight="100px" *ngIf="addCoti">
-        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
-            <mat-select placeholder="Seleccionar Cotizacion" [(value)]="idAddCoti" (selectionChange)="obtenerCoti($event.value)">
-                <mat-option [value]="0">Seleccionar Requerimiento</mat-option>
-                <mat-option *ngFor="let p of cotizaciones_area" [value]="p.idCotizacion">
-                    {{p.motivo}} 
-                </mat-option>
-            </mat-select>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
-        </mat-grid-tile>
-    </mat-grid-list>
-    
-    <div *ngIf="addCoti" >
-        <mat-table [dataSource]="dataSource_coti" matSort>
-            <ng-container matColumnDef="nro">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Nro</mat-header-cell>
-                <mat-cell *matCellDef="let row">{{row.idCotizacion}}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="nombre">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Motivo</mat-header-cell>
-                <mat-cell *matCellDef="let row">{{row.motivo}}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="acciones">
-                <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <a type="button" mat-raised-button color="primary" (click)="removerCoti(element.idCotizacion)" class="button-center" [disabled]="disabledAdd">Remover</a>
-                </mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumnsCoti"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumnsCoti;"> 
-            </mat-row>
-        </mat-table>
-    </div>
-    
-    <div *ngIf="isAdmin" >
-        <br/>
-        <mat-grid-list cols = "5" rowHeight="100px">
-            <mat-grid-tile [colspan] = "2" [rowspan] = "1">
-                <mat-select placeholder="Seleccionar Producto" [(value)]="idProducto">
-                    <mat-option [value]="0">Seleccionar Producto</mat-option>
-                    <mat-option *ngFor="let p of productos" [value]="p.idProducto">
-                        {{p.nombre}} 
-                    </mat-option>
-                </mat-select>
-            </mat-grid-tile>
-            <mat-grid-tile [colspan] = "2" [rowspan] = "1">
-                <mat-form-field>
-                    <input matInput type="number" placeholder="Cantidad" required formControlName="cantidad">
-                </mat-form-field>
-            </mat-grid-tile>
-            <mat-grid-tile [colspan] = "1" [rowspan] = "1">
-                <a mat-raised-button color="primary" (click)="agregarProducto()" [disabled]="disabledAdd">Agregar</a>
-            </mat-grid-tile>
-        </mat-grid-list>
-        <mat-table [dataSource]="dataSource" matSort>
-            <ng-container matColumnDef="nombre">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre Producto</mat-header-cell>
-                <mat-cell *matCellDef="let row">{{row.nombre}}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="stock">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</mat-header-cell>
-                <mat-cell *matCellDef="let row">{{row.stock}}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="precio">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Precio</mat-header-cell>
-                <mat-cell *matCellDef="let row">{{row.precio}}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="total">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Total</mat-header-cell>
-                <mat-cell *matCellDef="let row">{{row.total}}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="acciones">
-                <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <a type="button" mat-raised-button color="primary" (click)="removerProducto(element.idProducto)" class="button-center" [disabled]="disabledAdd">Remover</a>
-                </mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;"> 
-            </mat-row>
-        </mat-table>
-    </div>
+    <mat-tab-group>
+        <mat-tab label="ORDEN DE TRABAJO" *ngIf="isAdmin">
+            <div *ngIf="isAdmin">
+                <mat-grid-list cols = "5" rowHeight="100px">
+                    <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+                        <mat-select placeholder="Seleccionar" [(value)]="idProducto">
+                            <mat-option [value]="0">Seleccionar</mat-option>
+                            <mat-option *ngFor="let p of productos" [value]="p.idProducto">
+                                {{p.nombre}} 
+                            </mat-option>
+                        </mat-select>
+                    </mat-grid-tile>
+                    <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+                        <mat-form-field>
+                            <input matInput type="number" placeholder="Cantidad" required formControlName="cantidad">
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile [colspan] = "1" [rowspan] = "1">
+                        <a mat-raised-button color="primary" (click)="agregarProducto()" [disabled]="disabledAdd">Agregar</a>
+                    </mat-grid-tile>
+                </mat-grid-list>
+                <mat-table [dataSource]="dataSource" matSort>
+                    <ng-container matColumnDef="nombre">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre Producto</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.nombre}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="stock">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.stock}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="precio">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Precio</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.precio}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="total">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Total</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.total}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="acciones">
+                        <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <a type="button" mat-raised-button color="primary" (click)="removerProducto(element.idProducto)" class="button-center" [disabled]="disabledAdd">Remover</a>
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"> 
+                    </mat-row>
+                </mat-table>
+            </div>
+        </mat-tab>
+        <mat-tab label="ORDEN DE SERVICIO" *ngIf="addCoti">
+            <mat-grid-list cols = "5" rowHeight="100px" *ngIf="addCoti">
+                <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+                    <mat-select placeholder="Seleccionar" [(value)]="idAddCoti" (selectionChange)="obtenerCoti($event.value)">
+                        <mat-option [value]="null">Seleccionar Orden</mat-option>
+                        <mat-option *ngFor="let p of cotizaciones_area" [value]="p.idCotizacion">
+                            {{p.motivo}} 
+                        </mat-option>
+                    </mat-select>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+                </mat-grid-tile>
+            </mat-grid-list>
+            <div *ngIf="addCoti" >
+                <mat-table [dataSource]="dataSource_coti" matSort>
+                    <ng-container matColumnDef="nro">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Nro Orden</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.idCotizacion}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="nombre">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Motivo</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.motivo}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="encargado">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Encargado</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.usuario.nombres}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="acciones">
+                        <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <a type="button" mat-raised-button color="primary" (click)="removerCoti(element.idCotizacion)" class="button-center" [disabled]="disabledAdd">Remover</a>
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumnsCoti"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumnsCoti;"> 
+                    </mat-row>
+                </mat-table>
+            </div>
+        </mat-tab>
+        <mat-tab label="RESUMEN DE ORDENES" *ngIf="addCoti && isAdmin">
+            <h3><b>Resumen de Ordenes:</b></h3>
+            <ul>
+                <li>
+                    - Se ha ingresado un total de {{cantidad_ingreso}} por el total de {{total_ingreso}}
+                </li>
+                <br/>
+                <li>
+                    - Se ha ingresado un total de {{cantidad_egreso}} por el total de {{total_egreso}}
+                </li>
+            </ul>
+        </mat-tab>
+    </mat-tab-group>
     <mat-grid-list cols = "4" rowHeight = "100px">
         <mat-grid-tile [colspan] = "2" [rowspan] = "1" *ngIf="!isUpdate">
             <button mat-raised-button color="primary" (click)="registrar()">Registrar</button>

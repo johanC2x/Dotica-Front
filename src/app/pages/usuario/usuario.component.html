@@ -15,9 +15,17 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>Nombres Completo</mat-header-cell>
         <mat-cell *matCellDef="let row">{{row.nombres}}</mat-cell>
     </ng-container>
+    <ng-container matColumnDef="tipo">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Usuario</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.roles[0].nombre}}</mat-cell>s
+    </ng-container>
     <ng-container matColumnDef="acciones">
         <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
         <mat-cell *matCellDef="let element">
+            <a type="button" mat-raised-button color="primary" class="button-center" [routerLink]="['/usuario-registro',element.username]">
+                Editar
+            </a>
+            &nbsp;&nbsp;&nbsp;
             <a type="button" mat-raised-button color="primary" class="button-center">Remover</a>
         </mat-cell>
     </ng-container>

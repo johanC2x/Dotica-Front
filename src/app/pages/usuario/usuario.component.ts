@@ -9,7 +9,7 @@ import { MatTableDataSource } from '@angular/material';
 })
 export class UsuarioComponent implements OnInit {
 
-  displayedColumns = ['usuario','nombre_completo','acciones'];
+  displayedColumns = ['usuario','nombre_completo','tipo','acciones'];
   usuarios = [];
   dataSource: MatTableDataSource<any>;
 

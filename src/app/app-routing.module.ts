@@ -88,7 +88,9 @@ const routes: Routes = [
   ],canActivate: [GuardService]},
   {path :'editar-cotizacion/:id',component:CotizacionEditComponent,canActivate: [GuardService]},
   {path :'usuario',component:UsuarioComponent,canActivate: [GuardService]},
-  {path :'usuario-registro',component:UsuarioregistroComponent,canActivate: [GuardService]},
+  {path :'usuario-registro',component:UsuarioregistroComponent,children:[
+    {path :':id',component:UsuarioregistroComponent,canActivate: [GuardService]},
+  ],canActivate: [GuardService]},
 
   { path: 'not-401', component: Not401Component },
   { path: 'home', component: HomeComponent },

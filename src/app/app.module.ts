@@ -54,6 +54,9 @@ import { SolicitudComponent } from './pages/solicitud/solicitud.component';
 import { CotizacionEditComponent } from './pages/cotizacion-edit/cotizacion-edit.component';
 import { UsuarioComponent } from './pages/usuario/usuario.component';
 import { UsuarioregistroComponent } from './pages/usuarioregistro/usuarioregistro.component';
+import { CotizacionModalComponent } from './pages/cotizacion/cotizacion-modal/cotizacion-modal.component';
+import { UsuariorolComponent } from './pages/usuariorol/usuariorol.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 export function tokenGetter() {
   let tk = JSON.parse(sessionStorage.getItem(TOKEN_NAME));
@@ -106,7 +109,9 @@ export function tokenGetter() {
     SolicitudComponent,
     CotizacionEditComponent,
     UsuarioComponent,
-    UsuarioregistroComponent
+    UsuarioregistroComponent,
+    CotizacionModalComponent,
+    UsuariorolComponent
   ],
   entryComponents: [
 	DialogoComponent,
@@ -114,7 +119,7 @@ export function tokenGetter() {
     TipoproductoDialogoComponent,
     ProveedorproductoDialogoComponent,
     MarcaDialogoComponent,
-    DialogoProductodetalleComponent
+    DialogoProductodetalleComponent,
   ], //DialogoDetalleComponent
   imports: [
     BrowserModule,
@@ -124,6 +129,7 @@ export function tokenGetter() {
     FormsModule,
     ReactiveFormsModule,
     MatRadioModule,
+    MatTabsModule,
     MatGridListModule,
     PdfViewerModule,
     JwtModule.forRoot({

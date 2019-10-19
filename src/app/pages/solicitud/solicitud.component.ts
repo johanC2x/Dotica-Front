@@ -13,8 +13,8 @@ import { UsuarioService } from '../../_service/usuario.service';
 })
 export class SolicitudComponent implements OnInit {
 
-  displayedColumns_admin = ['nro','descripcion','solicitante','tipo','estado','area','fechaCreacion','acciones'];
-  displayedColumns = ['nro','descripcion','tipo','estado','fechaCreacion','acciones'];
+  displayedColumns_admin = ['nro','motivo','descripcion','solicitante','tipo','estado','fechaCreacion','acciones'];
+  displayedColumns = ['nro','motivo','descripcion','tipo','estado','fechaCreacion','acciones'];
 
   cotizaciones : Cotizacion[] = [];
   dataSource: MatTableDataSource<Cotizacion>;

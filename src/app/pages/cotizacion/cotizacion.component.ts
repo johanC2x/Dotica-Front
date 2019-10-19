@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, FormControlName } from '@angular/forms';
 import { ProductoService } from '../../_service/producto.service';
 import { Producto } from '../../_model/producto';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource, MatDialog } from '@angular/material';
 import { CotizacionService } from '../../_service/cotizacion.service';
 import { MatSnackBar} from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
@@ -10,6 +10,7 @@ import { TOKEN_NAME,ESTADO_R, ESTADO_C, ESTADO_A, ESTADO_A1, ESTADO_A2, ESTADO_A
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { UsuarioService } from '../../_service/usuario.service';
 import { Cotizacion } from '../../_model/cotizacion';
+import { CotizacionModalComponent } from './cotizacion-modal/cotizacion-modal.component';
 
 @Component({
   selector: 'app-cotizacion',
@@ -19,7 +20,7 @@ import { Cotizacion } from '../../_model/cotizacion';
 export class CotizacionComponent implements OnInit {
 
   displayedColumns = ['nombre','stock','precio','total','acciones'];
-  displayedColumnsCoti = ['nro','nombre','acciones'];
+  displayedColumnsCoti = ['nro','nombre','encargado','acciones'];
 
   mensaje: string;
   form: FormGroup;
@@ -37,6 +38,7 @@ export class CotizacionComponent implements OnInit {
   objProducto = {"idProducto":0,"nombre":"","stock":"0","precio":0,"total" : 0};
   dataSource: MatTableDataSource<Producto>;
   dataSource_coti: MatTableDataSource<Cotizacion>;
+  dataSource_resumen: MatTableDataSource<any>;
 
   cotizacion: {
     "descripcion": string,
@@ -70,7 +72,7 @@ export class CotizacionComponent implements OnInit {
   isAdmin = false;
   disabledAdd = false;
   addCoti = false;
-  idAddCoti = 0;
+  idAddCoti = "0";
   cotizaciones_area : Cotizacion[] = [];
   nombre_boton = "Requerimiento";
 
@@ -81,13 +83,20 @@ export class CotizacionComponent implements OnInit {
   disabledUpdate = false;
   cotizacionObj : Cotizacion;
 
+  //TOTALES 
+  cantidad_ingreso = 0;
+  total_ingreso = 0;
+  cantidad_egreso = 0;
+  total_egreso = 0;
+
   constructor(
     private route: ActivatedRoute,
     private builder: FormBuilder,
     private productoService:ProductoService,
     private cotizacionService:CotizacionService,
     private usuarioService:UsuarioService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -150,16 +159,19 @@ export class CotizacionComponent implements OnInit {
       } else if(user.roles[0].nombre === 'ADMA3'){
         data = data.filter(coti => coti.usuario.roles[0].nombre === 'ADMA3').sort((a,b) => (a.idCotizacion > b.idCotizacion) ? 1 : ((b.idCotizacion > a.idCotizacion) ? -1 : 0));
       }
+      data = data.filter(coti => coti.estado !== 'Requerido');
       this.cotizaciones_area = data;
     });
   }
 
   obtenerCoti(value: number){
     this.cotizacionService.obtenerPorId(value).subscribe(data => {
-      this.lista_cotizacion.push(data);
+      if(this.lista_cotizacion.findIndex(v => v.idCotizacion === data.idCotizacion) === -1){
+        this.lista_cotizacion.push(data);
+      }
       this.dataSource_coti = new MatTableDataSource(this.lista_cotizacion);
+      this.idAddCoti = "null";
     });
-    this.idAddCoti = 0;
   }
 
   removerCoti(id: number){
@@ -169,6 +181,7 @@ export class CotizacionComponent implements OnInit {
 
   obtenerProductos(){
     this.productoService.listar().subscribe(data =>{
+      data = data.filter(v => v.tipoProducto.nombre === 'SERVICIO');
       this.productos = data;
     });
   }
@@ -202,13 +215,20 @@ export class CotizacionComponent implements OnInit {
       }
 
       if(data.estado === ESTADO_R && user.roles[0].nombre !== 'USER') {
+        console.log(1);
         this.isAdmin = true;
         this.disabledUpdate = false;
         this.disabledAdd = true;
         this.tipoCotizacion = 'Cotizacion';
         this.estadoCotizacion = 'Cotizado';
-        this.nombre_boton = 'Cotizar';
+        if(data.usuario.roles[0].nombre === 'ADMA1' || data.usuario.roles[0].nombre === 'ADMA2'
+            || data.usuario.roles[0].nombre === 'ADMA3'){
+          this.nombre_boton = 'Autorizar';
+        } else {
+          this.nombre_boton = 'Cotizar';
+        }
       } else if(data.estado === ESTADO_C && user.roles[0].nombre === 'USER') {
+        console.log(2);
         this.isAdmin = true;
         this.disabledAdd = true;
         this.tipoCotizacion = 'Cotizacion';
@@ -216,41 +236,52 @@ export class CotizacionComponent implements OnInit {
         this.nombre_boton = 'Aprobar';
         this.isCancel = true;
       } else if(data.estado === ESTADO_A && user.roles[0].nombre !== 'USER') {
+        console.log(3);
         this.isAdmin = true;
         this.disabledAdd = true;
+        this.title = 'Orden de Servicio';
         this.tipoCotizacion = 'Orden de Servicio';
         this.estadoCotizacion = 'AprobadoA1';
         this.nombre_boton = 'Autorizar';
       } else if(data.estado === ESTADO_A1 && user.roles[0].nombre !== 'USER') {
+        console.log(4);
         this.isEditAdmin = true;
         this.isAdmin = true;
         this.disabledAdd = true;
+        this.title = 'Orden de Servicio';
         this.tipoCotizacion = 'Orden de Servicio';
         this.estadoCotizacion = 'AprobadoA2';
         this.nombre_boton = 'Autorizar';
       } else if(data.estado === ESTADO_A2 && user.roles[0].nombre !== 'USER') {
+        console.log(5);
         this.isEditAdmin = true;
         this.isAdmin = true;
         this.disabledAdd = true;
+        this.title = 'Orden de Servicio';
         this.tipoCotizacion = 'Orden de Servicio';
         this.estadoCotizacion = 'AprobadoA3';
         this.nombre_boton = 'Autorizar';
       } else if(data.estado === ESTADO_A3 && user.roles[0].nombre !== 'USER') {
+        console.log(6);
         this.isEditAdmin = true;
         this.isAdmin = true;
         this.disabledAdd = true;
+        this.title = 'Orden de Servicio';
         this.tipoCotizacion = 'Orden Autorizada';
         this.estadoCotizacion = 'Finalizado';
         this.nombre_boton = 'Autorizar';
       } else if(data.estado === ESTADO_F && user.roles[0].nombre !== 'USER') {
+        console.log(7);
         this.isEditAdmin = true;
         this.isAdmin = true;
         this.disabledUpdate = true;
         this.disabledAdd = true;
+        this.title = 'Orden de Servicio';
         this.tipoCotizacion = 'Finalizado';
         this.estadoCotizacion = 'Finalizado';
         this.nombre_boton = 'Autorizada';
       } else {
+        console.log(8);
         this.isEditAdmin = false;
       }
 
@@ -303,6 +334,8 @@ export class CotizacionComponent implements OnInit {
 
       let array_productos = JSON.parse(data.data);
       let array_coti = JSON.parse(data.data_coti);
+      let total_ingreso = 0;
+      let cantidad_ingreso = 0 ;
       if(array_productos.length > 0){
         array_productos.forEach((element) => {
           this.objProducto = {"idProducto": 0,"nombre":"","stock":"0","precio":0, "total" : 0};
@@ -311,32 +344,60 @@ export class CotizacionComponent implements OnInit {
           this.objProducto.stock = element.stock;
           this.objProducto.precio = element.precio;
           this.objProducto.total = element.total;
+
+          cantidad_ingreso = cantidad_ingreso + element.stock;
+          total_ingreso = total_ingreso + element.total;
+
           this.productosStock.push(this.objProducto);
           this.dataSource = new MatTableDataSource(this.productosStock);
         });
+        this.cantidad_ingreso = cantidad_ingreso;
+        this.total_ingreso = total_ingreso;
       }
+
+      let total_egreso = 0;
+      let cantidad_egreso = 0 ;
       if(array_coti.length > 0){
-        console.log(array_coti);
+        array_coti.forEach(element => {
+          let data = JSON.parse(element.data);
+          if(data.length > 0){
+            data.forEach(p => {
+              cantidad_egreso = cantidad_egreso + p.total;
+              total_egreso = total_egreso + p.stock;
+            });
+          }
+        });
+        
+        this.cantidad_egreso = cantidad_egreso;
+        this.total_egreso = total_egreso;
+
         this.lista_cotizacion = array_coti;
         this.dataSource_coti = new MatTableDataSource(this.lista_cotizacion);
       }
+      
     });
   }
 
   agregarProducto(){
     let id = this.idProducto;
     let cantidad = this.form.value['cantidad'];
-    this.productoService.obtenerPorId(id.toString()).subscribe(data =>{
-      let costo = (data.costo === undefined || data.costo === null) ? 0: data.costo;
-      this.objProducto = {"idProducto": 0,"nombre":"","stock":"0","precio":0, "total" : 0};
-      this.objProducto.idProducto = data.idProducto;
-      this.objProducto.nombre = data.nombre;
-      this.objProducto.stock = cantidad;
-      this.objProducto.precio = costo;
-      this.objProducto.total = costo * cantidad;
-      this.productosStock.push(this.objProducto);
-      this.dataSource = new MatTableDataSource(this.productosStock);
-    });
+    if(cantidad === 0){
+      this.snackBar.open('Es necesario agregar una cantidad', "Cerrar", { duration: 2000 });
+    } else if(id === undefined || id === null){
+      this.snackBar.open('Es necesario seleccionar un servicio', "Cerrar", { duration: 2000 });
+    } else {
+      this.productoService.obtenerPorId(id.toString()).subscribe(data =>{
+        let costo = (data.costo === undefined || data.costo === null) ? 0: data.costo;
+        this.objProducto = {"idProducto": 0,"nombre":"","stock":"0","precio":0, "total" : 0};
+        this.objProducto.idProducto = data.idProducto;
+        this.objProducto.nombre = data.nombre;
+        this.objProducto.stock = cantidad;
+        this.objProducto.precio = costo;
+        this.objProducto.total = costo * cantidad;
+        this.productosStock.push(this.objProducto);
+        this.dataSource = new MatTableDataSource(this.productosStock);
+      });
+    }
   }
 
   removerProducto(id: number){
@@ -413,6 +474,13 @@ export class CotizacionComponent implements OnInit {
     this.idArea = "0";
     this.objProducto = {"idProducto":0,"nombre":"","stock":"0","precio":0,"total" : 0};
     this.dataSource = new MatTableDataSource(this.productosStock);
+  }
+
+  agregarOrden(){
+    this.dialog.open(CotizacionModalComponent, {
+      width:'250px',
+      data:{}
+    });
   }
 
 }
