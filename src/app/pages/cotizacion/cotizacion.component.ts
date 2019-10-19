@@ -116,7 +116,7 @@ export class CotizacionComponent implements OnInit {
 
     this.valueType = 'Con Aprobacion';
     this.valueState = 'Pendiente';
-    this.obtenerProductos();
+    
     this.obtenerCotizacionPorArea();
 
     this.usuarioService.obtenerPorNick(decodedToken.user_name).subscribe( data => {
@@ -147,6 +147,7 @@ export class CotizacionComponent implements OnInit {
         sessionStorage.setItem("usuario", JSON.stringify(data));
       });
     }
+    this.obtenerProductos();
   }
 
   obtenerCotizacionPorArea(){
