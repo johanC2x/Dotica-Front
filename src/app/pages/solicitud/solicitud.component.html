@@ -1,5 +1,41 @@
 <mat-toolbar>Lista de solicitudes</mat-toolbar>
-
+<form class="example-container" [formGroup]="form" #frmProducto="ngForm" >
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                <h4>Filtros</h4>
+            </mat-card-title>
+        </mat-card-header>
+    </mat-card>
+    <mat-grid-list cols = "7" rowHeight="100px">
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-form-field>
+                <input matInput placeholder="Cod. Orden" formControlName="nro_orden">
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-form-field>
+                <mat-select placeholder="Seleccionar Estado" [(value)]="idEstado">
+                    <mat-option [value]="0">Seleccionar Estado</mat-option>
+                    <mat-option *ngFor="let p of estados" [value]="p">
+                        {{p}} 
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-form-field>
+                <input matInput [matDatepicker]="picker" placeholder="Fecha" formControlName="fecha">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "1" [rowspan] = "1">
+            <button mat-raised-button color="primary" (click)="buscarOrden()">Buscar</button>
+        </mat-grid-tile>
+    </mat-grid-list>
+</form>
+<br/>
 <div *ngIf="!isAdmin">
     <mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="nro">
@@ -29,7 +65,7 @@
         <ng-container matColumnDef="acciones">
             <mat-header-cell *matHeaderCellDef class="text-center">Acciones</mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <a type="button" mat-raised-button color="primary" class="button-center" [routerLink]="['/registrar-cotizacion',element.idCotizacion]">
+                <a type="button" mat-raised-button color="primary" class="button-center" href="/registrar-cotizacion/{{element.idCotizacion}}">
                     Ver Detalle
                 </a>
             </mat-cell>
@@ -78,7 +114,7 @@
         <ng-container matColumnDef="acciones">
             <mat-header-cell *matHeaderCellDef class="text-center">Acciones</mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <a type="button" mat-raised-button color="primary" class="button-center" [routerLink]="['/registrar-cotizacion',element.idCotizacion]">
+                <a type="button" mat-raised-button color="primary" class="button-center" href="/registrar-cotizacion/{{element.idCotizacion}}">
                     Ver Detalle
                 </a>
             </mat-cell>

@@ -82,7 +82,11 @@ const routes: Routes = [
   },
   {path :'registrar-producto',component:ProductoComponent,canActivate: [GuardService]},
   
-  {path :'cotizacion',component:SolicitudComponent,canActivate: [GuardService]},
+  {path :'cotizacion',component:SolicitudComponent,children:[
+    {path :'requerimientos',component:SolicitudComponent,canActivate: [GuardService]},
+    {path :'ordenes',component:SolicitudComponent,canActivate: [GuardService]},
+  ],canActivate: [GuardService]},
+  {path :'registrar-coti',component:CotizacionComponent,canActivate: [GuardService]},
   {path :'registrar-cotizacion',component:CotizacionComponent,children:[
     {path :':id',component:CotizacionComponent,canActivate: [GuardService]},
   ],canActivate: [GuardService]},

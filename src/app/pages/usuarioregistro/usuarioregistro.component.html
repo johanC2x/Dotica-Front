@@ -51,6 +51,14 @@
             </mat-form-field>
         </mat-grid-tile>
     </mat-grid-list>
+
+    <mat-select placeholder="Menu" [(value)]="idMenu" multiple>
+        <mat-option [value]="0">Seleccionar Menu</mat-option>
+        <mat-option *ngFor="let p of menus" [value]="p.idMenu">
+            Opcion : {{p.nombre}}
+        </mat-option>
+    </mat-select>
+
     <mat-grid-list cols = "4" rowHeight = "100px">
         <mat-grid-tile [colspan] = "2" [rowspan] = "1">
             <button mat-raised-button color="primary" (click)="registrar()">Registrar</button>

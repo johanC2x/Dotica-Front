@@ -10,3 +10,7 @@ export const ESTADO_A1 = 'AprobadoA1';
 export const ESTADO_A2 = 'AprobadoA2';
 export const ESTADO_A3 = 'AprobadoA3';
 export const ESTADO_F = 'Finalizado';
+
+export const PATH_REQ = '/cotizacion/requerimientos';
+export const PATH_ORD = '/cotizacion/ordenes';
+export const PATH_COT = '/cotizacion';

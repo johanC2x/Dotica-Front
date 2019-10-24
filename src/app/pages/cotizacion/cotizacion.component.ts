@@ -5,12 +5,13 @@ import { Producto } from '../../_model/producto';
 import { MatTableDataSource, MatDialog } from '@angular/material';
 import { CotizacionService } from '../../_service/cotizacion.service';
 import { MatSnackBar} from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TOKEN_NAME,ESTADO_R, ESTADO_C, ESTADO_A, ESTADO_A1, ESTADO_A2, ESTADO_A3, ESTADO_F } from '../../_shared/var.constants';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { UsuarioService } from '../../_service/usuario.service';
 import { Cotizacion } from '../../_model/cotizacion';
 import { CotizacionModalComponent } from './cotizacion-modal/cotizacion-modal.component';
+import { ModalComponent } from '../modal/modal.component';
 
 @Component({
   selector: 'app-cotizacion',
@@ -54,9 +55,10 @@ export class CotizacionComponent implements OnInit {
 
   tipoCotizacion = "Requerimiento";
   estadoCotizacion = "Requerido";
-  title = "Requerimiento";
+  title = "Cotización";
   nro_coti = 0;
   cliente = "";
+  doc_cliente = "";
   idArea = "";
   areas = [
     {id:"A1",nombre:"Area1"},
@@ -91,6 +93,7 @@ export class CotizacionComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private builder: FormBuilder,
     private productoService:ProductoService,
     private cotizacionService:CotizacionService,
@@ -107,9 +110,10 @@ export class CotizacionComponent implements OnInit {
       'tipo': new FormControl(''),
       'estado': new FormControl(''),
       'cantidad': new FormControl(0),
-      'nombre': new FormControl('')
+      'nombre': new FormControl(''),
+      'direccion': new FormControl(''),
     });
-    
+
     const helper = new JwtHelperService();
     let tk = JSON.parse(sessionStorage.getItem(TOKEN_NAME));
     const decodedToken = helper.decodeToken(tk.access_token);
@@ -133,6 +137,7 @@ export class CotizacionComponent implements OnInit {
       this.isEditAdmin = false;
       this.usuarioService.obtenerPorNick(decodedToken.user_name).subscribe( data => {
         this.cliente = data.nombres;
+        this.doc_cliente = data.nroDocumento;
         let position_rol = data.roles.findIndex(v => v.nombre === 'ADMIN');
         let position_rol_a1 = data.roles.findIndex(v => v.nombre === 'ADMA1');
         let position_rol_a2 = data.roles.findIndex(v => v.nombre === 'ADMA2');
@@ -212,10 +217,11 @@ export class CotizacionComponent implements OnInit {
         'descripcion': new FormControl(data.descripcion),
         'tipo': new FormControl(data.tipo),
         'estado': new FormControl(data.estado),
-        'cantidad': new FormControl(0),
+        'cantidad': new FormControl(data.cantidad),
         'nombre': new FormControl(data.motivo)
       });
       this.cliente = data.usuario.nombres;
+      this.doc_cliente = data.usuario.nroDocumento;
       this.idCliente = data.usuario.idUsuario;
       this.idArea = data.area;
 
@@ -396,15 +402,17 @@ export class CotizacionComponent implements OnInit {
       this.snackBar.open('Es necesario seleccionar un servicio', "Cerrar", { duration: 2000 });
     } else {
       this.productoService.obtenerPorId(id.toString()).subscribe(data =>{
-        let costo = (data.costo === undefined || data.costo === null) ? 0: data.costo;
-        this.objProducto = {"idProducto": 0,"nombre":"","stock":"0","precio":0, "total" : 0};
-        this.objProducto.idProducto = data.idProducto;
-        this.objProducto.nombre = data.nombre;
-        this.objProducto.stock = cantidad;
-        this.objProducto.precio = costo;
-        this.objProducto.total = costo * cantidad;
-        this.productosStock.push(this.objProducto);
-        this.dataSource = new MatTableDataSource(this.productosStock);
+        if(this.productosStock.findIndex(v => v.idProducto === data.idProducto) === -1){
+          let costo = (data.costo === undefined || data.costo === null) ? 0: data.costo;
+          this.objProducto = {"idProducto": 0,"nombre":"","stock":"0","precio":0, "total" : 0};
+          this.objProducto.idProducto = data.idProducto;
+          this.objProducto.nombre = data.nombre;
+          this.objProducto.stock = cantidad;
+          this.objProducto.precio = costo;
+          this.objProducto.total = costo * cantidad;
+          this.productosStock.push(this.objProducto);
+          this.dataSource = new MatTableDataSource(this.productosStock);
+        }
       });
     }
   }
@@ -425,6 +433,7 @@ export class CotizacionComponent implements OnInit {
       ncotizacion: this.form.value['ncotizacion'],
       motivo: this.form.value['nombre'],
       descripcion: this.form.value['descripcion'],
+      cantidad: this.form.value['cantidad'],
       tipo: this.valueType,
       estado: this.valueState,
       area: this.idArea,
@@ -453,9 +462,8 @@ export class CotizacionComponent implements OnInit {
   }
 
   insertar(obj: any){
-    this.cotizacionService.registrar(obj).subscribe(data => {
-      this.snackBar.open('Se registró correctamente', "Aviso", { duration: 2000 });
-      this.limpiar();
+    this.cotizacionService.registrar(obj).subscribe(data => {      
+      this.openDialog();
     },error => {
       this.snackBar.open('Se ha producido un error', "Error", { duration: 2000 });
     });
@@ -463,9 +471,8 @@ export class CotizacionComponent implements OnInit {
 
   actualizar(obj: any){
     this.cotizacionService.actualizar(obj).subscribe(data => {
-      this.snackBar.open('Se actualizó correctamente', "Aviso", { duration: 2000 });
+      this.openDialog();
       this.disabledUpdate = true;
-      //this.limpiar();
     },error => {
       this.snackBar.open('Se ha producido un error', "Error", { duration: 2000 });
     });
@@ -477,7 +484,7 @@ export class CotizacionComponent implements OnInit {
       'descripcion': new FormControl(''),
       'tipo': new FormControl(''),
       'estado': new FormControl(''),
-      'cantidad': new FormControl(0),
+      'cantidad': new FormControl(''),
       'nombre': new FormControl('')
     });
     this.idArea = "0";
@@ -485,11 +492,12 @@ export class CotizacionComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.productosStock);
   }
 
-  agregarOrden(){
-    this.dialog.open(CotizacionModalComponent, {
-      width:'250px',
-      data:{}
+  openDialog(): void {
+    this.dialog.open(ModalComponent, {
+      width: '250px'
     });
   }
+
+
 
 }

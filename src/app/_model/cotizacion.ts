@@ -10,5 +10,6 @@ export class Cotizacion{
     data: string;
     data_coti: string;
     usuario: any;
-    productos: any[]
+    productos: any[];
+    cantidad: number;
 }

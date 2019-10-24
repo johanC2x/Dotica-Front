@@ -15,9 +15,9 @@
     </button>
 
     <mat-menu #menu="matMenu">
-      <button mat-menu-item routerLink="/perfil">
+      <button mat-menu-item routerLink="/home">
         <mat-icon>account_box</mat-icon>
-        <span>Mi Perfil</span>
+        <span>Home</span>
       </button>
       <button mat-menu-item (click)="sidenav.opened = false" (click)="loginService.cerrarSesion()">
         <mat-icon>exit_to_app</mat-icon>
@@ -68,10 +68,15 @@
         </div>
         <div *ngIf="m.show && m.subMenu">
           <div *ngFor="let sb of m.subMenu">
-            <button mat-menu-item (click)="sidenav.toggle()" routerLink="{{sb.ruta}}" 
+            <a href="{{sb.ruta}}" mat-menu-item style="cursor: pointer;color:blue;background-color: dimgrey;">
+              {{sb.nombre}}
+            </a>
+          <!--
+            <button mat-menu-item (click)="sidenav.toggle()" routerLink="{{sb.ruta}}" routerLinkActive="active"
                     style="cursor: pointer;color:blue;background-color: dimgrey;">
               <span>{{sb.nombre}}</span>
             </button>
+          -->
           </div>
         </div>
         <mat-divider></mat-divider>

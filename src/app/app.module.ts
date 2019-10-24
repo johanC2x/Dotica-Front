@@ -45,6 +45,7 @@ import { ProveedorproductoDialogoComponent } from './pages/proveedorproducto/pro
 import { ProductoComponent } from './pages/producto/producto.component';
 import { BuscarproductoComponent } from './pages/buscarproducto/buscarproducto.component';
 import { DialogoProductodetalleComponent } from './pages/buscarproducto/dialogo-productodetalle/dialogo-productodetalle.component';
+import { ModalComponent } from './pages/modal/modal.component';
 import { HomeComponent } from './pages/home/home.component';
 import { CotizacionComponent } from './pages/cotizacion/cotizacion.component';
 
@@ -57,6 +58,7 @@ import { UsuarioregistroComponent } from './pages/usuarioregistro/usuarioregistr
 import { CotizacionModalComponent } from './pages/cotizacion/cotizacion-modal/cotizacion-modal.component';
 import { UsuariorolComponent } from './pages/usuariorol/usuariorol.component';
 import { MatTabsModule } from '@angular/material/tabs';
+import { DatePipe } from '@angular/common'
 
 export function tokenGetter() {
   let tk = JSON.parse(sessionStorage.getItem(TOKEN_NAME));
@@ -111,7 +113,8 @@ export function tokenGetter() {
     UsuarioComponent,
     UsuarioregistroComponent,
     CotizacionModalComponent,
-    UsuariorolComponent
+    UsuariorolComponent,
+    ModalComponent
   ],
   entryComponents: [
 	DialogoComponent,
@@ -120,6 +123,7 @@ export function tokenGetter() {
     ProveedorproductoDialogoComponent,
     MarcaDialogoComponent,
     DialogoProductodetalleComponent,
+    ModalComponent
   ], //DialogoDetalleComponent
   imports: [
     BrowserModule,
@@ -139,7 +143,7 @@ export function tokenGetter() {
       }
     })
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

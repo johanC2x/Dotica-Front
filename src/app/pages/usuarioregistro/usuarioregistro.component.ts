@@ -4,6 +4,8 @@ import { UsuarioService } from '../../_service/usuario.service';
 import { MatSnackBar } from '@angular/material';
 //import { PassThrough } from 'stream';
 import { ActivatedRoute } from '@angular/router';
+import { MenuService } from '../../_service/menu.service';
+import { Menu } from '../../_model/menu';
 
 @Component({
   selector: 'app-usuarioregistro',
@@ -23,13 +25,16 @@ export class UsuarioregistroComponent implements OnInit {
     {'idRol':'6','nombre':'ADMA3'}
   ];
   idTipoDocumento = 0;
+  idMenu = 0;
   tipo_documento = [{'id':'1','nombre':'DNI'},{'id':'2','nombre':'RUC'}];
   usuario : any;
+  menus : Menu[];
 
   constructor(
     private route: ActivatedRoute,
     private builder: FormBuilder,
     private service : UsuarioService,
+    private menuService : MenuService,
     private snackBar: MatSnackBar
   ) { }
 
@@ -49,12 +54,20 @@ export class UsuarioregistroComponent implements OnInit {
     } else {
       this.listar();
     }
+    this.listarMenu();
   }
 
   listar(){
     this.service.listar().subscribe(data => {
       this.usuario = data[data.length - 1];
       this.idUsuario = this.usuario.idUsuario + 1;
+    });
+  }
+
+  listarMenu(){
+    this.menuService.listar().subscribe(data => {
+      console.log(data);
+      this.menus = data;
     });
   }
 
@@ -91,6 +104,14 @@ export class UsuarioregistroComponent implements OnInit {
         tipoDocumento:this.idTipoDocumento,
         nroDocumento:this.form.value['nrodoc']
       };
+      if(req.roles.length > 0){
+        this.menuService.obtenerPorId(this.idMenu).subscribe(response_menu => {
+          let req_menu = response_menu;
+        },error_menu => {
+          this.snackBar.open('Ocurrio un error', "Cerrar", { duration: 2000 });
+        });
+      }
+      return false;
       this.service.registrar(req).subscribe(
         data => {
           this.listar();

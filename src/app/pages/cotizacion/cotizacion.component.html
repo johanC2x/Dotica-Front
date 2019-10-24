@@ -2,7 +2,7 @@
     <mat-card>
         <mat-card-header>
             <mat-card-title>
-                <h4>Registro de {{title}} - Nro {{nro_coti}}</h4>
+                <h4>Registro de solictud de {{title}} - Nro {{nro_coti}}</h4>
             </mat-card-title>
         </mat-card-header>
     </mat-card>
@@ -34,14 +34,34 @@
     </mat-grid-list>
     -->
     <mat-form-field >
-        <textarea matInput placeholder="Descripcion de Solicitud" required formControlName="descripcion"
-        rows="5">
+        <textarea matInput placeholder="Descripcion de Solicitud" required formControlName="descripcion" rows="5">
         </textarea>
     </mat-form-field>
+    <mat-grid-list cols = "6" rowHeight="100px">
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-form-field>
+                <input matInput placeholder="Documento" value="{{doc_cliente}}" readonly="true"/>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-form-field>
+                <input matInput placeholder="Solicitante" value="{{cliente}}" readonly="true"/>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan] = "2" [rowspan] = "1">
+            <mat-form-field>
+                <input matInput type="number" placeholder="Cantidad" required formControlName="cantidad">
+            </mat-form-field>
+        </mat-grid-tile>
+    </mat-grid-list>
     <mat-form-field>
-        <input matInput placeholder="Solicitante" value="{{cliente}}" readonly="true"/>
+        <input matInput type="number" placeholder="Direccion" formControlName="direccion" readonly="true">
     </mat-form-field>
     
+    <mat-grid-list cols = "5" rowHeight="100px">
+
+    </mat-grid-list>
+
     <mat-tab-group>
         <mat-tab label="ORDEN DE TRABAJO" *ngIf="isAdmin">
             <div *ngIf="isAdmin">
@@ -55,9 +75,6 @@
                         </mat-select>
                     </mat-grid-tile>
                     <mat-grid-tile [colspan] = "2" [rowspan] = "1">
-                        <mat-form-field>
-                            <input matInput type="number" placeholder="Cantidad" required formControlName="cantidad">
-                        </mat-form-field>
                     </mat-grid-tile>
                     <mat-grid-tile [colspan] = "1" [rowspan] = "1">
                         <a mat-raised-button color="primary" (click)="agregarProducto()" [disabled]="disabledAdd">Agregar</a>
