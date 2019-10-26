@@ -186,6 +186,10 @@ export class CotizacionComponent implements OnInit {
 
   obtenerProductos(){
     let user = JSON.parse(sessionStorage.getItem("usuario"));
+    if(user.roles === null){
+      location.reload();
+    }
+
     if(user.roles[0].nombre === 'ADMA1' || user.roles[0].nombre === 'ADMA2'  || user.roles[0].nombre === 'ADMA3' ){
       this.productoService.listar().subscribe(data =>{
         data = data.filter(v => v.tipoProducto.nombre === 'MATERIAL');
