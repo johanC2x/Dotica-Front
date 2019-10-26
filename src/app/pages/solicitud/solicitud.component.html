@@ -38,8 +38,12 @@
 <br/>
 <div *ngIf="!isAdmin">
     <mat-table [dataSource]="dataSource" matSort>
-        <ng-container matColumnDef="nro">
+        <ng-container matColumnDef="corr">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Nro</mat-header-cell>
+            <mat-cell *matCellDef="let row; let i = index">{{i + 1}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="nro">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Codigo</mat-header-cell>
             <mat-cell *matCellDef="let row">{{row.idCotizacion}}</mat-cell>
         </ng-container>
         <ng-container matColumnDef="motivo">
@@ -77,8 +81,12 @@
 </div>
 <div *ngIf="isAdmin">
     <mat-table [dataSource]="dataSource" matSort>
-        <ng-container matColumnDef="nro">
+        <ng-container matColumnDef="corr">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Nro</mat-header-cell>
+            <mat-cell *matCellDef="let row; let i = index">{{i + 1}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="nro">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Codigo</mat-header-cell>
             <mat-cell *matCellDef="let row">{{row.idCotizacion}}</mat-cell>
         </ng-container>
         <ng-container matColumnDef="motivo">

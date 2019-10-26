@@ -17,8 +17,8 @@ import { DatePipe } from '@angular/common';
 })
 export class SolicitudComponent implements OnInit {
 
-  displayedColumns_admin = ['nro','motivo','descripcion','solicitante','tipo','estado','fechaCreacion','acciones','descargar'];
-  displayedColumns = ['nro','motivo','descripcion','tipo','estado','fechaCreacion','acciones'];
+  displayedColumns_admin = ['corr','nro','motivo','descripcion','solicitante','tipo','estado','fechaCreacion','acciones','descargar'];
+  displayedColumns = ['corr','nro','motivo','descripcion','tipo','estado','fechaCreacion','acciones'];
 
   form: FormGroup;
   cotizaciones : Cotizacion[] = [];
