@@ -63,7 +63,7 @@
             <mat-cell *matCellDef="let row">{{row.fechaCreacion | date: 'dd/MM/yyyy'}}</mat-cell>
         </ng-container>
         <ng-container matColumnDef="acciones">
-            <mat-header-cell *matHeaderCellDef class="text-center">Acciones</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef class="text-center"></mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <a type="button" mat-raised-button color="primary" class="button-center" href="/registrar-cotizacion/{{element.idCotizacion}}">
                     Ver Detalle
@@ -112,10 +112,18 @@
             <mat-cell *matCellDef="let row">{{row.fechaCreacion | date: 'dd/MM/yyyy'}}</mat-cell>
         </ng-container>
         <ng-container matColumnDef="acciones">
-            <mat-header-cell *matHeaderCellDef class="text-center">Acciones</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef class="text-center"></mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <a type="button" mat-raised-button color="primary" class="button-center" href="/registrar-cotizacion/{{element.idCotizacion}}">
                     Ver Detalle
+                </a>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="descargar">
+            <mat-header-cell *matHeaderCellDef class="text-center"></mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <a type="button" mat-raised-button color="primary" class="button-center" (click)="goToLink('assets/docs/Reporte_1.pdf')">
+                    Descargar
                 </a>
             </mat-cell>
         </ng-container>

@@ -17,7 +17,7 @@ import { DatePipe } from '@angular/common';
 })
 export class SolicitudComponent implements OnInit {
 
-  displayedColumns_admin = ['nro','motivo','descripcion','solicitante','tipo','estado','fechaCreacion','acciones'];
+  displayedColumns_admin = ['nro','motivo','descripcion','solicitante','tipo','estado','fechaCreacion','acciones','descargar'];
   displayedColumns = ['nro','motivo','descripcion','tipo','estado','fechaCreacion','acciones'];
 
   form: FormGroup;
@@ -128,41 +128,49 @@ export class SolicitudComponent implements OnInit {
     let val2 = false;
 
     this.cotizaciones = this.cotizaciones_copia;
+
+    let req = {};
+
     if(orden !== ''){
-      cotis = this.cotizaciones.filter(coti => coti.idCotizacion.toString() === orden);
-      if(cotis.length > 0){
-        this.cotizaciones = cotis;
-      }else{
-        cotis = this.cotizaciones;
-        val2 = true;
-      }
-    }else{
       val1 = true;
     }
 
     if(idEstado !== '' && parseInt(idEstado) !== 0){
-      cotis = this.cotizaciones.filter(coti => coti.estado.toString() === idEstado);
-      if(cotis.length > 0){
-        this.cotizaciones = cotis;
-      }else{
-        cotis = this.cotizaciones;
-        val2 = true;
-      }
-    }else{
       val2 = true;
     }
 
-    if(fecha !== ''){
-      cotis = this.cotizaciones.filter(coti => this.datepipe.transform(coti.fechaCreacion, 'dd/MM/yyyy') === fecha);
-    }else{
-
-    }
-
     if(val1 && val2){
-      this.getListforPath();
+      req = {
+        idCotizacion : orden,
+        estado : idEstado
+      };
+    } else {
+      if(val1){
+        req = {
+          idCotizacion : orden
+        };
+        cotis = this.cotizaciones.filter(coti => coti.idCotizacion === orden);
+      }else if(val2){
+        req = {
+          estado : idEstado
+        };
+        cotis = this.cotizaciones.filter(coti => coti.estado.toString() === idEstado);
+      }
     }
-    
+
+    cotis = this.cotizaciones.filter((item) => {
+      for (var key in req) {
+        if (item[key] === undefined || item[key] != req[key])
+          return false;
+      }
+      return true;
+    });
+
     this.dataSource = new MatTableDataSource(cotis);
+  }
+
+  goToLink(url: string){
+    window.open(url, "_blank");
   }
 
 }

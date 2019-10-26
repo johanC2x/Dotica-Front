@@ -5,7 +5,7 @@ import { Producto } from '../../_model/producto';
 import { MatTableDataSource, MatDialog } from '@angular/material';
 import { CotizacionService } from '../../_service/cotizacion.service';
 import { MatSnackBar} from '@angular/material';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { TOKEN_NAME,ESTADO_R, ESTADO_C, ESTADO_A, ESTADO_A1, ESTADO_A2, ESTADO_A3, ESTADO_F } from '../../_shared/var.constants';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { UsuarioService } from '../../_service/usuario.service';
@@ -55,7 +55,7 @@ export class CotizacionComponent implements OnInit {
 
   tipoCotizacion = "Requerimiento";
   estadoCotizacion = "Requerido";
-  title = "Cotización";
+  title = "Requerimiento";
   nro_coti = 0;
   cliente = "";
   doc_cliente = "";
@@ -93,7 +93,6 @@ export class CotizacionComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private builder: FormBuilder,
     private productoService:ProductoService,
     private cotizacionService:CotizacionService,
@@ -111,9 +110,9 @@ export class CotizacionComponent implements OnInit {
       'estado': new FormControl(''),
       'cantidad': new FormControl(0),
       'nombre': new FormControl(''),
-      'direccion': new FormControl(''),
+      'direccion': new FormControl('')
     });
-
+    
     const helper = new JwtHelperService();
     let tk = JSON.parse(sessionStorage.getItem(TOKEN_NAME));
     const decodedToken = helper.decodeToken(tk.access_token);
@@ -218,7 +217,8 @@ export class CotizacionComponent implements OnInit {
         'tipo': new FormControl(data.tipo),
         'estado': new FormControl(data.estado),
         'cantidad': new FormControl(data.cantidad),
-        'nombre': new FormControl(data.motivo)
+        'nombre': new FormControl(data.motivo),
+        'direccion': new FormControl('')
       });
       this.cliente = data.usuario.nombres;
       this.doc_cliente = data.usuario.nroDocumento;
@@ -462,8 +462,10 @@ export class CotizacionComponent implements OnInit {
   }
 
   insertar(obj: any){
-    this.cotizacionService.registrar(obj).subscribe(data => {      
+    this.cotizacionService.registrar(obj).subscribe(data => {
+      //this.snackBar.open('Se registró correctamente', "Aviso", { duration: 2000 });
       this.openDialog();
+      this.limpiar();
     },error => {
       this.snackBar.open('Se ha producido un error', "Error", { duration: 2000 });
     });
@@ -471,8 +473,10 @@ export class CotizacionComponent implements OnInit {
 
   actualizar(obj: any){
     this.cotizacionService.actualizar(obj).subscribe(data => {
+      //this.snackBar.open('Se actualizó correctamente', "Aviso", { duration: 2000 });
       this.openDialog();
       this.disabledUpdate = true;
+      //this.limpiar();
     },error => {
       this.snackBar.open('Se ha producido un error', "Error", { duration: 2000 });
     });
@@ -484,7 +488,7 @@ export class CotizacionComponent implements OnInit {
       'descripcion': new FormControl(''),
       'tipo': new FormControl(''),
       'estado': new FormControl(''),
-      'cantidad': new FormControl(''),
+      'cantidad': new FormControl(0),
       'nombre': new FormControl('')
     });
     this.idArea = "0";
@@ -492,12 +496,17 @@ export class CotizacionComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.productosStock);
   }
 
+  agregarOrden(){
+    this.dialog.open(CotizacionModalComponent, {
+      width:'250px',
+      data:{}
+    });
+  }
+
   openDialog(): void {
     this.dialog.open(ModalComponent, {
       width: '250px'
     });
   }
-
-
 
 }
