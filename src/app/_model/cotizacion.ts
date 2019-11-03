@@ -7,6 +7,7 @@ export class Cotizacion{
     area: string;
     fechaCreacion: Date;
     fechaModificacion: Date;
+    fechaFiltro: string;
     data: string;
     data_coti: string;
     usuario: any;

@@ -123,10 +123,12 @@ export class SolicitudComponent implements OnInit {
     let orden = this.form.value['nro_orden'];
     let fecha = this.datepipe.transform(this.form.value['fecha'], 'dd/MM/yyyy');
     let idEstado = this.idEstado;
-    let cotis = this.cotizaciones;
     let val1 = false;
     let val2 = false;
+    let val3 = false;
 
+    this.cotizaciones.forEach( el => el.fechaFiltro = this.datepipe.transform(el.fechaCreacion, 'dd/MM/yyyy').toString() );
+    let cotis = this.cotizaciones;
     this.cotizaciones = this.cotizaciones_copia;
 
     let req = {};
@@ -139,12 +141,32 @@ export class SolicitudComponent implements OnInit {
       val2 = true;
     }
 
-    if(val1 && val2){
+    if(fecha !== null){
+      val3 = true;
+    }
+
+    if(val1 && val2 && val3){
+      req = {
+        idCotizacion : orden,
+        estado : idEstado,
+        fechaFiltro : fecha
+      };
+    }else if(val1 && val2){
       req = {
         idCotizacion : orden,
         estado : idEstado
       };
-    } else {
+    }else if(val2 && val3){
+      req = {
+        estado : idEstado,
+        fechaFiltro : fecha
+      };
+    }else if(val1 && val3){
+      req = {
+        idCotizacion : orden,
+        fechaFiltro : fecha
+      };
+    }else{
       if(val1){
         req = {
           idCotizacion : orden
@@ -155,6 +177,11 @@ export class SolicitudComponent implements OnInit {
           estado : idEstado
         };
         cotis = this.cotizaciones.filter(coti => coti.estado.toString() === idEstado);
+      }else if(val3){
+        req = {
+          fechaFiltro : fecha
+        };
+        cotis = this.cotizaciones.filter(coti => coti.fechaFiltro.toString() === fecha);
       }
     }
 
@@ -165,7 +192,7 @@ export class SolicitudComponent implements OnInit {
       }
       return true;
     });
-
+    
     this.dataSource = new MatTableDataSource(cotis);
   }
 
