@@ -10,7 +10,11 @@ export class Cotizacion{
     fechaFiltro: string;
     data: string;
     data_coti: string;
+    data_orden: string;
     usuario: any;
     productos: any[];
     cantidad: number;
+    modificaArea1: Date;
+    modificaArea2: Date;
+    modificaArea3: Date;
 }

@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { MenuService } from '../../_service/menu.service';
 import { Menu } from '../../_model/menu';
+import { Rol } from '../../_model/rol';
 
 @Component({
   selector: 'app-usuarioregistro',
@@ -29,6 +30,9 @@ export class UsuarioregistroComponent implements OnInit {
   tipo_documento = [{'id':'1','nombre':'DNI'},{'id':'2','nombre':'RUC'}];
   usuario : any;
   menus : Menu[];
+
+  menu_temporal : Menu[]; 
+  roles : Rol[];
 
   constructor(
     private route: ActivatedRoute,
@@ -66,7 +70,6 @@ export class UsuarioregistroComponent implements OnInit {
 
   listarMenu(){
     this.menuService.listar().subscribe(data => {
-      console.log(data);
       this.menus = data;
     });
   }
@@ -105,8 +108,12 @@ export class UsuarioregistroComponent implements OnInit {
         nroDocumento:this.form.value['nrodoc']
       };
       if(req.roles.length > 0){
-        this.menuService.obtenerPorId(this.idMenu).subscribe(response_menu => {
-          let req_menu = response_menu;
+        this.menuService.obtenerPorIdMasivo(this.idMenu).subscribe(response_menu => {
+          if(response_menu.length > 0){
+            response_menu.forEach( (element) => {
+              console.log(element.roles[0].idRol);
+            });
+          }
         },error_menu => {
           this.snackBar.open('Ocurrio un error', "Cerrar", { duration: 2000 });
         });

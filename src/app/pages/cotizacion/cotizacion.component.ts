@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, FormControlName } from '@angular/forms';
 import { ProductoService } from '../../_service/producto.service';
 import { Producto } from '../../_model/producto';
@@ -12,6 +12,7 @@ import { UsuarioService } from '../../_service/usuario.service';
 import { Cotizacion } from '../../_model/cotizacion';
 import { CotizacionModalComponent } from './cotizacion-modal/cotizacion-modal.component';
 import { ModalComponent } from '../modal/modal.component';
+import { DatePipe, DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-cotizacion',
@@ -22,6 +23,7 @@ export class CotizacionComponent implements OnInit {
 
   displayedColumns = ['nombre','stock','precio','total','acciones'];
   displayedColumnsCoti = ['nro','nombre','encargado','acciones'];
+  displayedColumnsOrden = ['nro','fec_ini','fec_fin','creado','acciones'];
 
   mensaje: string;
   form: FormGroup;
@@ -36,10 +38,12 @@ export class CotizacionComponent implements OnInit {
   producto: Producto;
   productosStock = [];
   lista_cotizacion = [];
+  lista_orde_trabajo= [];
   objProducto = {"idProducto":0,"nombre":"","stock":"0","precio":0,"total" : 0};
   dataSource: MatTableDataSource<Producto>;
   dataSource_coti: MatTableDataSource<Cotizacion>;
   dataSource_resumen: MatTableDataSource<any>;
+  dataSource_orden: MatTableDataSource<any>;
 
   cotizacion: {
     "descripcion": string,
@@ -72,6 +76,7 @@ export class CotizacionComponent implements OnInit {
   isUpdate = false;
   isCancel = false;
   isAdmin = false;
+  isAdma = false;
   disabledAdd = false;
   addCoti = false;
   idAddCoti = "0";
@@ -92,14 +97,19 @@ export class CotizacionComponent implements OnInit {
   total_egreso = 0;
 
   constructor(
+    @Inject(DOCUMENT) document,
     private route: ActivatedRoute,
     private builder: FormBuilder,
     private productoService:ProductoService,
     private cotizacionService:CotizacionService,
     private usuarioService:UsuarioService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
-  ) { }
+    private dialog: MatDialog,
+    public datepipe: DatePipe
+  ) {
+    document.getElementById('descripcion');
+    document.getElementById("cantidad");
+   }
 
   ngOnInit() {
     this.form = this.builder.group({
@@ -110,7 +120,10 @@ export class CotizacionComponent implements OnInit {
       'estado': new FormControl(''),
       'cantidad': new FormControl(0),
       'nombre': new FormControl(''),
-      'direccion': new FormControl('')
+      'direccion': new FormControl(''),
+      'fecha_orden_ini': new FormControl(''),
+      'fecha_orden_fin': new FormControl(''),
+      'detalle_orden': new FormControl('')
     });
     
     const helper = new JwtHelperService();
@@ -222,7 +235,10 @@ export class CotizacionComponent implements OnInit {
         'estado': new FormControl(data.estado),
         'cantidad': new FormControl(data.cantidad),
         'nombre': new FormControl(data.motivo),
-        'direccion': new FormControl('')
+        'direccion': new FormControl(''),
+        'fecha_orden_ini': new FormControl(''),
+        'fecha_orden_fin': new FormControl(''),
+        'detalle_orden': new FormControl('')
       });
       this.cliente = data.usuario.nombres;
       this.doc_cliente = data.usuario.nroDocumento;
@@ -262,6 +278,7 @@ export class CotizacionComponent implements OnInit {
         this.tipoCotizacion = 'Orden de Servicio';
         this.estadoCotizacion = 'AprobadoA1';
         this.nombre_boton = 'Autorizar';
+        this.isAdma = true;
       } else if(data.estado === ESTADO_A1 && user.roles[0].nombre !== 'USER') {
         console.log(4);
         this.isEditAdmin = true;
@@ -271,6 +288,7 @@ export class CotizacionComponent implements OnInit {
         this.tipoCotizacion = 'Orden de Servicio';
         this.estadoCotizacion = 'AprobadoA2';
         this.nombre_boton = 'Autorizar';
+        this.isAdma = true;
       } else if(data.estado === ESTADO_A2 && user.roles[0].nombre !== 'USER') {
         console.log(5);
         this.isEditAdmin = true;
@@ -280,6 +298,7 @@ export class CotizacionComponent implements OnInit {
         this.tipoCotizacion = 'Orden de Servicio';
         this.estadoCotizacion = 'AprobadoA3';
         this.nombre_boton = 'Autorizar';
+        this.isAdma = true;
       } else if(data.estado === ESTADO_A3 && user.roles[0].nombre !== 'USER') {
         console.log(6);
         this.isEditAdmin = true;
@@ -289,6 +308,7 @@ export class CotizacionComponent implements OnInit {
         this.tipoCotizacion = 'Orden Autorizada';
         this.estadoCotizacion = 'Finalizado';
         this.nombre_boton = 'Autorizar';
+        this.isAdma = true;
       } else if(data.estado === ESTADO_F && user.roles[0].nombre !== 'USER') {
         console.log(7);
         this.isEditAdmin = true;
@@ -299,6 +319,7 @@ export class CotizacionComponent implements OnInit {
         this.tipoCotizacion = 'Finalizado';
         this.estadoCotizacion = 'Finalizado';
         this.nombre_boton = 'Autorizada';
+        this.isAdma = true;
       } else {
         console.log(8);
         this.isEditAdmin = false;
@@ -353,6 +374,8 @@ export class CotizacionComponent implements OnInit {
 
       let array_productos = JSON.parse(data.data);
       let array_coti = JSON.parse(data.data_coti);
+      let array_orden = JSON.parse(data.data_orden);
+
       let total_ingreso = 0;
       let cantidad_ingreso = 0 ;
       if(array_productos.length > 0){
@@ -376,7 +399,7 @@ export class CotizacionComponent implements OnInit {
 
       let total_egreso = 0;
       let cantidad_egreso = 0 ;
-      if(array_coti.length > 0){
+      if(array_coti !== null && array_coti.length > 0){
         array_coti.forEach(element => {
           let data = JSON.parse(element.data);
           if(data.length > 0){
@@ -392,6 +415,21 @@ export class CotizacionComponent implements OnInit {
 
         this.lista_cotizacion = array_coti;
         this.dataSource_coti = new MatTableDataSource(this.lista_cotizacion);
+      }
+
+      let array_data_orden = [];
+      if(array_orden !==null && array_orden.length > 0){
+        array_orden.forEach(element => {
+          array_data_orden.push({
+            'nro': element.nro,
+            'fecha_orden_ini' : element.fecha_orden_ini,
+            'fecha_orden_fin' : element.fecha_orden_fin,
+            'deta_oden' : element.deta_oden,
+            'user': element.user
+          });
+        });
+        this.lista_orde_trabajo = array_data_orden;
+        this.dataSource_orden = new MatTableDataSource(this.lista_orde_trabajo);
       }
       
     });
@@ -444,7 +482,8 @@ export class CotizacionComponent implements OnInit {
       usuario: {},
       productos: JSON.parse(JSON.stringify(this.productosStock)),
       data: JSON.stringify(this.productosStock),
-      data_coti: JSON.stringify(this.lista_cotizacion)
+      data_coti: JSON.stringify(this.lista_cotizacion),
+      data_orden: JSON.stringify(this.lista_orde_trabajo)
     };
     if(this.route.firstChild !== null && this.route.firstChild !== undefined && this.route.firstChild.snapshot.params['id'] !== undefined){
       obj.idCotizacion = this.idCotizacion;
@@ -454,6 +493,7 @@ export class CotizacionComponent implements OnInit {
         idUsuario: this.idCliente
       };
       this.actualizar(obj);
+      return false;
     }else{
       delete obj.idCotizacion;
       obj.tipo = this.tipoCotizacion;
@@ -484,6 +524,32 @@ export class CotizacionComponent implements OnInit {
     },error => {
       this.snackBar.open('Se ha producido un error', "Error", { duration: 2000 });
     });
+  }
+
+  agregarOrdenTrabajo(){
+    let user = JSON.parse(sessionStorage.getItem("usuario"));
+    let req = {
+      nro: (this.lista_orde_trabajo.length + 1),
+      fecha_orden_ini : this.form.value['fecha_orden_ini'],
+      fecha_orden_fin : this.form.value['fecha_orden_fin'],
+      deta_oden : this.form.value['detalle_orden'],
+      user: user.roles[0].nombre
+    }
+    this.lista_orde_trabajo.push(req);
+    this.dataSource_orden = new MatTableDataSource(this.lista_orde_trabajo);
+
+    /*
+    this.form = this.builder.group({
+      'fecha_orden_ini': new FormControl(''),
+      'fecha_orden_fin': new FormControl(''),
+      'detalle_orden': new FormControl('')
+    });
+    */
+  }
+
+  removerOrden(nro: any){
+    this.lista_orde_trabajo.splice(this.lista_orde_trabajo.findIndex(v => v.nro === nro), 1);
+    this.dataSource_orden = new MatTableDataSource(this.lista_cotizacion);
   }
 
   limpiar(){

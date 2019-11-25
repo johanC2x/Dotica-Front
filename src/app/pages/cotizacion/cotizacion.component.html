@@ -34,6 +34,9 @@
     </mat-grid-list>
     -->
     <mat-form-field >
+        <!-- 
+        <input id="descripcion" type="textarea" matInput placeholder="Descripcion de Solicitud" readonly="true" formControlName="descripcion" rows="5"/>
+        -->
         <textarea matInput placeholder="Descripcion de Solicitud" required formControlName="descripcion" rows="5">
         </textarea>
     </mat-form-field>
@@ -50,14 +53,40 @@
         </mat-grid-tile>
         <mat-grid-tile [colspan] = "2" [rowspan] = "1">
             <mat-form-field>
-                <input matInput type="number" placeholder="Cantidad" required formControlName="cantidad">
+                <input id="cantidad" matInput type="number" placeholder="Cantidad" required formControlName="cantidad">
             </mat-form-field>
         </mat-grid-tile>
     </mat-grid-list>
     <mat-form-field>
         <input matInput type="number" placeholder="Direccion" formControlName="direccion" readonly="true">
     </mat-form-field>
-    
+    <br/>
+
+    <mat-card *ngIf="addCoti">
+        <mat-card-header>
+            <mat-card-title>
+                <h4>Registro de Ordenes de trabajo</h4>
+            </mat-card-title>
+        </mat-card-header>
+    </mat-card>
+    <br/>
+    <mat-form-field *ngIf="addCoti">
+        <input matInput [matDatepicker]="picker" placeholder="Fecha Inicio" formControlName="fecha_orden_ini">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field *ngIf="addCoti">
+        <input matInput [matDatepicker]="picker2" placeholder="Fecha Fin" formControlName="fecha_orden_fin">
+        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field *ngIf="addCoti">
+        <textarea matInput placeholder="Detalle de Orden" required rows="5" cols="10" formControlName="detalle_orden">
+        </textarea>
+    </mat-form-field>
+    <a type="button" mat-raised-button color="primary" (click)="agregarOrdenTrabajo()" *ngIf="addCoti">Agregar Orden</a>
+
+
     <mat-grid-list cols = "5" rowHeight="100px">
 
     </mat-grid-list>
@@ -105,6 +134,37 @@
                     </ng-container>
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                     <mat-row *matRowDef="let row; columns: displayedColumns;"> 
+                    </mat-row>
+                </mat-table>
+            </div>
+        </mat-tab>
+        <mat-tab label="ORDEN DE TRABAJO" *ngIf="addCoti">
+            <div *ngIf="addCoti" >
+                <mat-table [dataSource]="dataSource_orden" matSort>
+                    <ng-container matColumnDef="nro">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Nro</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.nro}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="fec_ini">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Inicio</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.fecha_orden_ini | date: 'dd/MM/yyyy'}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="fec_fin">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Fin</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.fecha_orden_fin | date: 'dd/MM/yyyy'}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="creado">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Detalle</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.deta_oden}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="acciones">
+                        <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <a type="button" mat-raised-button color="primary" (click)="removerOrden(element.nro)" class="button-center">Remover</a>
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumnsOrden"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumnsOrden;"> 
                     </mat-row>
                 </mat-table>
             </div>

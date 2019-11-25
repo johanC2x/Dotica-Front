@@ -28,6 +28,13 @@ export class MenuService {
     });
   }
 
+  obtenerPorIdMasivo(id: number){
+    let access_token = JSON.parse(sessionStorage.getItem(TOKEN_NAME)).access_token;
+    return this.http.post<Menu[]>(`${this.url}/menus/masivo/${id}`,'', {
+      headers: new HttpHeaders().set('Authorization', `bearer ${access_token}`).set('Content-Type', 'application/json')
+    });
+  }
+
   listarPorUsuario(nombre: string) {
     let access_token = JSON.parse(sessionStorage.getItem(TOKEN_NAME)).access_token;
     let data = {
